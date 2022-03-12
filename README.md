@@ -2,7 +2,7 @@
 -----
 ![](https://media.discordapp.net/attachments/782707705792954388/931918337989029948/Untitled108_20220115083034.png)
 -----
-Made by 4 people literally out of pure boredom, Aiming to rewrite Friday Night Funkin' to include
+Made by 2 people literally out of pure boredom, Aiming to rewrite Friday Night Funkin' to include
 easier modding, cool features, and little quality of life shits
 -----
 # ℹ️ Preparing Libraries for Compiling
@@ -104,7 +104,5 @@ The compiling speed depends on your hardware.
 - Menus
 
 ## 📖 Credits
-- Raf - Project Owner, Coder and Artist ([GitHub](https://github.com/RafaelGiacom)) ([GameJolt](https://gamejolt.com/@RafaelGiacom)) ([GameBanana](https://gamebanana.com/members/1739332))
 - SwordCube - mega dumbass (True Facts), Coder, Artist ([GitHub](https://github.com/swordcube)) ([GameJolt](https://gamejolt.com/@swordcube)) ([Twitter](https://twitter.com/swordcube))
-- ZonianDX - Coder, Gamer 😎, Artist ([GitHub](https://github.com/timeless13GH)) ([Twitter](https://twitter.com/ZonianDX)) ([GameBanana](https://gamebanana.com/members/2029461))
 - Leather128 - Coder but the best out of the coders ([GitHub](https://github.com/Leather128)) ([GameBanana](https://gamebanana.com/members/1799813)) ([Itch.io](https://leather128.itch.io/)) ([YouTube](https://www.youtube.com/channel/UCbCtO-ghipZessWaOBx8u1g))
