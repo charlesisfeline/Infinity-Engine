@@ -1,0 +1,25 @@
+{
+    "songs": [
+        {
+            "displayName": "Pico",
+            "song": "Pico",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Philly Nice",
+            "song": "Philly Nice",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Blammed",
+            "song": "Blammed",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        }
+    ]
+}

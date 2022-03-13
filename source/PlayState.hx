@@ -738,11 +738,11 @@ class PlayState extends MusicBeatState
 		scoreTxt.scrollFactor.set();
 		add(scoreTxt);
 
-		iconP1 = new HealthIcon(SONG.player1, true);
+		iconP1 = new HealthIcon('placeholder', true);
 		iconP1.y = healthBar.y - (iconP1.height / 2);
 		add(iconP1);
 
-		iconP2 = new HealthIcon(SONG.player2, false);
+		iconP2 = new HealthIcon('placeholder', false);
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
 
@@ -1397,11 +1397,17 @@ class PlayState extends MusicBeatState
 
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
+		
+		var multX:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 15), 0, 1));
+		var multY:Float = FlxMath.lerp(1, iconP1.scale.y, CoolUtil.boundTo(1 - (elapsed * 15), 0, 1));
 
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
-
+		iconP1.scale.set(multX, multY);
 		iconP1.updateHitbox();
+
+		var multX:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 15), 0, 1));
+		var multY:Float = FlxMath.lerp(1, iconP2.scale.y, CoolUtil.boundTo(1 - (elapsed * 15), 0, 1));
+
+		iconP2.scale.set(multX, multY);
 		iconP2.updateHitbox();
 
 		var iconOffset:Int = 26;
@@ -1728,14 +1734,10 @@ class PlayState extends MusicBeatState
 
 				FlxG.switchState(new StoryMenuState());
 
-				// if ()
 				StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
 
 				if (SONG.validScore)
-				{
-					NGio.unlockMedal(60961);
 					Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
-				}
 
 				FlxG.save.data.weekUnlocked = StoryMenuState.weekUnlocked;
 				FlxG.save.flush();
@@ -1799,33 +1801,43 @@ class PlayState extends MusicBeatState
 		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 350;
 
-		var daRating:String = "sick";
+		var judgementTimings:Array<Float> = [
+			22.5, // sick
+			45, // good
+			90, // bad
+			180 // shit
+		];
 
-		if (noteDiff > Conductor.safeZoneOffset * 0.9)
+		var daRating:String = "marvelous";
+
+		var noteMs:Float = Conductor.songPosition - strumtime;
+
+		if(Math.abs(noteMs) > judgementTimings[0])
 		{
-			daRating = 'shit';
-			score = 50;
+			daRating = "sick";
+			score = 350;
 		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.75)
+
+		if(Math.abs(noteMs) > judgementTimings[1])
 		{
-			daRating = 'bad';
-			score = 100;
-		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.2)
-		{
-			daRating = 'good';
+			daRating = "good";
 			score = 200;
 		}
 
-		songScore += score;
+		if(Math.abs(noteMs) > judgementTimings[2])
+		{
+			daRating = "bad";
+			score = 100;
+		}
 
-		/* if (combo > 60)
-				daRating = 'sick';
-			else if (combo > 12)
-				daRating = 'good'
-			else if (combo > 4)
-				daRating = 'bad';
-		 */
+		if(Math.abs(noteMs) > judgementTimings[3])
+		{
+			daRating = "shit";
+			score = 50;
+			health -= 0.175;
+		}
+	
+		songScore += score;
 
 		var pixelShitPart1:String = "";
 		var pixelShitPart2:String = '';
@@ -2002,8 +2014,6 @@ class PlayState extends MusicBeatState
 									if (controlArray[ignoreList[shit]])
 										inIgnoreList = true;
 								}
-								if (!inIgnoreList)
-									badNoteCheck();
 							}
 						}
 					}
@@ -2053,10 +2063,6 @@ class PlayState extends MusicBeatState
 						daNote.destroy();
 					}
 				 */
-			}
-			else
-			{
-				badNoteCheck();
 			}
 		}
 
@@ -2148,13 +2154,7 @@ class PlayState extends MusicBeatState
 			// FlxG.sound.play(Paths.sound('missnote1'), 1, false);
 			// FlxG.log.add('played imss note');
 
-			boyfriend.stunned = true;
-
-			// get stunned for 5 seconds
-			new FlxTimer().start(5 / 60, function(tmr:FlxTimer)
-			{
-				boyfriend.stunned = false;
-			});
+			// bro fuck the stunned bull shit
 
 			switch (direction)
 			{
@@ -2193,10 +2193,6 @@ class PlayState extends MusicBeatState
 	{
 		if (keyP)
 			goodNoteHit(note);
-		else
-		{
-			badNoteCheck();
-		}
 	}
 
 	function goodNoteHit(note:Note):Void
@@ -2390,8 +2386,8 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03;
 		}
 
-		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+		iconP1.scale.set(1.2, 1.2);
+		iconP2.scale.set(1.2, 1.2);
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();

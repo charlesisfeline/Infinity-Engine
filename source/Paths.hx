@@ -1,9 +1,13 @@
 package;
 
+import lime.utils.Assets;
+import haxe.Json;
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
+
+using StringTools;
 
 class Paths
 {
@@ -16,7 +20,7 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	static function getPath(file:String, type:AssetType, library:Null<String>)
+	static public function getPath(file:String, type:AssetType, library:Null<String>)
 	{
 		if (library != null)
 			return getLibraryPath(file, library);
@@ -40,12 +44,12 @@ class Paths
 		return if (library == "preload" || library == "default") getPreloadPath(file); else getLibraryPathForce(file, library);
 	}
 
-	inline static function getLibraryPathForce(file:String, library:String)
+	inline static public function getLibraryPathForce(file:String, library:String)
 	{
 		return '$library:assets/$library/$file';
 	}
 
-	inline static function getPreloadPath(file:String)
+	inline static public function getPreloadPath(file:String)
 	{
 		return 'assets/$file';
 	}
@@ -102,6 +106,7 @@ class Paths
 
 	inline static public function font(key:String)
 	{
+		
 		return 'assets/fonts/$key';
 	}
 
@@ -113,5 +118,31 @@ class Paths
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
+	}
+
+	inline static public function parseJson(key:String):Dynamic
+	{
+		#if sys
+		return Json.parse(sys.io.File.getContent(Sys.getCwd() + key));
+		#else
+		return Json.parse(Assets.getText(key));
+		#end
+	}
+
+	inline static public function getHexCode(code:String)
+	{
+		if(!code.contains("#"))
+			return "#" + code;
+
+		return code;
+	}
+
+	inline public static function openURL(url:String)
+	{
+		#if linux
+		Sys.command('/usr/bin/xdg-open', [url, "&"]);
+		#else
+		FlxG.openURL(url);
+		#end
 	}
 }

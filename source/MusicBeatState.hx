@@ -19,7 +19,18 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	override function create()
+	override public function new(?skipTransition:Bool = false)
+	{
+		super();
+
+		transIn = FlxTransitionableState.defaultTransIn;
+        transOut = FlxTransitionableState.defaultTransOut;
+
+		FlxTransitionableState.skipNextTransIn = skipTransition;
+		FlxTransitionableState.skipNextTransOut = skipTransition;
+	}
+
+	override public function create()
 	{
 		if (transIn != null)
 			trace('reg ' + transIn.region);
@@ -27,7 +38,7 @@ class MusicBeatState extends FlxUIState
 		super.create();
 	}
 
-	override function update(elapsed:Float)
+	override public function update(elapsed:Float)
 	{
 		//everyStep();
 		var oldStep:Int = curStep;
