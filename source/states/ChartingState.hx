@@ -1,5 +1,9 @@
 package states;
 
+import game.Song;
+import util.CoolUtil;
+import game.Conductor;
+import ui.HealthIcon;
 import game.Conductor.BPMChangeEvent;
 import game.Section.SwagSection;
 import game.Song.SwagSong;
@@ -31,6 +35,7 @@ import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
 import openfl.utils.ByteArray;
+import game.Note;
 
 using StringTools;
 

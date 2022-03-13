@@ -1,5 +1,6 @@
 package game;
 
+import states.PlayState;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;

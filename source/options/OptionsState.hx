@@ -1,5 +1,6 @@
-package states;
+package options;
 
+import ui.Alphabet;
 import states.MusicBeatState;
 import controls.Controls.Control;
 import flash.text.TextField;
@@ -40,6 +41,6 @@ class OptionsState extends MusicBeatState
 		super.update(elapsed);
 
 		if(controls.BACK)
-			FlxG.switchState(new MainMenuState());
+			FlxG.switchState(new states.MainMenuState());
 	}
 }

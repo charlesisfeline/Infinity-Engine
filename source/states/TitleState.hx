@@ -1,5 +1,7 @@
 package states;
 
+import game.Conductor;
+import game.PlayerSettings;
 import engine.EngineSettings;
 #if desktop
 import util.Discord.DiscordClient;
@@ -29,6 +31,8 @@ import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
 import flixel.input.keyboard.FlxKey;
+import options.Options;
+import game.Highscore;
 
 using StringTools;
 

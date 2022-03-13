@@ -1,5 +1,7 @@
 package states;
 
+import game.Song;
+import game.Highscore;
 import flixel.tweens.FlxTween;
 #if desktop
 import util.Discord.DiscordClient;
@@ -13,6 +15,8 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
+import ui.Alphabet;
+import ui.HealthIcon;
 
 using StringTools;
 

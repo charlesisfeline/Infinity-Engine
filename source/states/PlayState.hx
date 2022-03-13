@@ -1,11 +1,16 @@
 package states;
 
+import game.Highscore;
+import util.CoolUtil;
+import game.Song;
+import game.Conductor;
+import ui.DialogueBox;
 #if desktop
 import util.Discord.DiscordClient;
 #end
-import Section.SwagSection;
-import Song.SwagSong;
-import WiggleEffect.WiggleEffectType;
+import game.Section.SwagSection;
+import game.Song.SwagSong;
+import util.WiggleEffect.WiggleEffectType;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -41,6 +46,15 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
+import background.BackgroundDancer;
+import background.BackgroundGirls;
+import game.Character;
+import game.Boyfriend;
+import game.Note;
+import ui.HealthIcon;
+import util.WiggleEffect;
+import eastereggs.GitarooPause;
+import substates.PauseSubState;
 
 using StringTools;
 
@@ -1591,7 +1605,7 @@ class PlayState extends MusicBeatState
 			vocals.stop();
 			FlxG.sound.music.stop();
 
-			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			openSubState(new substates.GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
 			// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 			

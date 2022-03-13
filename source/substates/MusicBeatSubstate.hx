@@ -1,6 +1,9 @@
-package;
+package substates;
 
-import Conductor.BPMChangeEvent;
+import game.Conductor;
+import game.PlayerSettings;
+import controls.Controls;
+import game.Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;
 

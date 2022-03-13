@@ -1,5 +1,9 @@
 package states;
 
+import game.Song;
+import game.Highscore;
+import ui.MenuCharacter;
+import ui.MenuItem;
 #if desktop
 import util.Discord.DiscordClient;
 #end

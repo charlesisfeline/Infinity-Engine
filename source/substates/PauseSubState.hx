@@ -1,6 +1,8 @@
-package;
+package substates;
 
-import Controls.Control;
+import util.CoolUtil;
+import ui.Alphabet;
+import states.PlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -108,7 +110,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
-					FlxG.switchState(new MainMenuState());
+					FlxG.switchState(new states.MainMenuState());
 			}
 		}
 
