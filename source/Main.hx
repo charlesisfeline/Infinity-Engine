@@ -1,16 +1,20 @@
 package;
 
-import states.TitleState;
-import flixel.FlxGame;
-import flixel.FlxState;
-import openfl.Assets;
 import openfl.Lib;
+import openfl.events.Event;
+import states.TitleState;
+import flixel.FlxState;
+import flixel.FlxSprite;
+import ui.SimpleInfoDisplay;
+import flixel.FlxG;
+import flixel.FlxGame;
 import openfl.display.FPS;
 import openfl.display.Sprite;
-import openfl.events.Event;
 
 class Main extends Sprite
 {
+	public static var display:SimpleInfoDisplay; // FPS, Memory, Version Display
+	
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
@@ -71,7 +75,8 @@ class Main extends Sprite
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		#if !mobile
-		addChild(new FPS(10, 3, 0xFFFFFF));
+		display = new SimpleInfoDisplay(10, 3, 0xFFFFFF, "_sans");
+		addChild(display);
 		#end
 	}
 }

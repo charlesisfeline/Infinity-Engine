@@ -159,6 +159,8 @@ class DialogueBox extends FlxSpriteGroup
 			portraitLeft.color = FlxColor.BLACK;
 			swagDialogue.color = FlxColor.WHITE;
 			dropText.color = FlxColor.BLACK;
+
+			portraitLeft.visible = false; // why didn't yall do this here too lol??
 		}
 
 		dropText.text = swagDialogue.text;

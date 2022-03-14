@@ -15,6 +15,7 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
+import mods.Mods;
 import ui.Alphabet;
 import ui.HealthIcon;
 
@@ -109,6 +110,8 @@ class FreeplayState extends MusicBeatState
 		grpSongs.clear();
 		grpIcons.clear();
 
+		// FIX LATER!! I DON'T HAVE MUCH TIME LOL
+
 		#if sys
 		weekJsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
 		#else
@@ -116,13 +119,19 @@ class FreeplayState extends MusicBeatState
 		#end
 		
 		#if (MODS_ALLOWED && sys)
-		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/weeks/'))
+		for(mod in Mods.activeMods)
 		{
-			var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/weeks');
-			
-			for(jsonThingy in funnyArray)
+			if(Mods.activeMods.length > 0)
 			{
-				weekJsonDirs.push(jsonThingy);
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
+				{
+					var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks');
+					
+					for(jsonThingy in funnyArray)
+					{
+						weekJsonDirs.push(jsonThingy);
+					}
+				}
 			}
 		}
 		#end
@@ -133,11 +142,14 @@ class FreeplayState extends MusicBeatState
 				weekJsons.push(dir.split(".json")[0]);
 		}
 
-		for(i in 0...weekJsonDirs.length)
+		trace("ADDED WEEKS TO LIST");
+
+		for(i in 0...weekJsons.length)
 		{
-			var week = weekJsonDirs[i];
+			var week = weekJsons[i];
 
 			var json:Dynamic = Paths.parseJson('weeks/$week');
+
 			var jsonSongs:Array<FreeplaySong> = json.songs;
 
 			for(song in jsonSongs)
@@ -179,8 +191,8 @@ class FreeplayState extends MusicBeatState
 
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
 
-		var upP = controls.UP_P;
-		var downP = controls.DOWN_P;
+		var upP = controls.UI_UP_P;
+		var downP = controls.UI_DOWN_P;
 		var accepted = controls.ACCEPT;
 
 		if (upP)
@@ -192,9 +204,9 @@ class FreeplayState extends MusicBeatState
 			changeSelection(1);
 		}
 
-		if (controls.LEFT_P)
+		if (controls.UI_LEFT_P)
 			changeDiff(-1);
-		if (controls.RIGHT_P)
+		if (controls.UI_RIGHT_P)
 			changeDiff(1);
 
 		if (controls.BACK)
@@ -256,6 +268,7 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		PlayState.storyWeek = songs[curSelected].week;
+		trace("CURRENT WEEK: " + PlayState.storyWeek);
 
 		/*#if PRELOAD_ALL
 		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);

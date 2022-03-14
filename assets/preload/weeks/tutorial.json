@@ -1,0 +1,11 @@
+{
+    "songs": [
+        {
+            "displayName": "Tutorial",
+            "song": "Tutorial",
+            "icon": "gf",
+            "color": "a5004d",
+            "difficulties": ["easy", "normal", "hard"]
+        }
+    ]
+}

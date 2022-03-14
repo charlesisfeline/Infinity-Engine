@@ -1,5 +1,6 @@
 package states;
 
+import options.Options;
 import game.Highscore;
 import util.CoolUtil;
 import game.Song;
@@ -226,13 +227,9 @@ class PlayState extends MusicBeatState
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
 		if (isStoryMode)
-		{
 			detailsText = "Story Mode: Week " + storyWeek;
-		}
 		else
-		{
 			detailsText = "Freeplay";
-		}
 
 		// String for when the game is paused
 		detailsPausedText = "Paused - " + detailsText;
@@ -760,6 +757,13 @@ class PlayState extends MusicBeatState
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
 
+		healthBarBG.visible = false;
+		healthBar.visible = false;
+		scoreTxt.visible = false;
+
+		iconP2.visible = false;
+		iconP1.visible = false;
+
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
@@ -918,6 +922,8 @@ class PlayState extends MusicBeatState
 	var startTimer:FlxTimer;
 	var perfectMode:Bool = false;
 
+	public var introSoundsSuffix:String = "";
+
 	function startCountdown():Void
 	{
 		inCutscene = false;
@@ -946,20 +952,30 @@ class PlayState extends MusicBeatState
 			var introAlts:Array<String> = introAssets.get('default');
 			var altSuffix:String = "";
 
+			introSoundsSuffix = '';
+
 			for (value in introAssets.keys())
 			{
 				if (value == curStage)
 				{
 					introAlts = introAssets.get(value);
 					altSuffix = '-pixel';
+
+					introSoundsSuffix = '-pixel';
 				}
 			}
 
 			switch (swagCounter)
-
 			{
 				case 0:
-					FlxG.sound.play(Paths.sound('intro3'), 0.6);
+					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
+
+					healthBarBG.visible = true;
+					healthBar.visible = true;
+					scoreTxt.visible = true;
+			
+					iconP2.visible = true;
+					iconP1.visible = true;
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.scrollFactor.set();
@@ -977,7 +993,7 @@ class PlayState extends MusicBeatState
 							ready.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro2'), 0.6);
+					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
@@ -994,7 +1010,7 @@ class PlayState extends MusicBeatState
 							set.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro1'), 0.6);
+					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.scrollFactor.set();
@@ -1013,7 +1029,7 @@ class PlayState extends MusicBeatState
 							go.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('introGo'), 0.6);
+					FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
 				case 4:
 			}
 
@@ -1587,13 +1603,6 @@ class PlayState extends MusicBeatState
 			trace("RESET = True");
 		}
 
-		// CHEAT = brandon's a pussy
-		if (controls.CHEAT)
-		{
-			health += 1;
-			trace("User is cheating!");
-		}
-
 		if (health <= 0)
 		{
 			boyfriend.stunned = true;
@@ -1787,7 +1796,7 @@ class PlayState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
 				FlxG.sound.music.stop();
 
-				LoadingState.loadAndSwitchState(new PlayState());
+				LoadingState.loadAndSwitchState(new PlayState(true));
 			}
 		}
 		else
@@ -1966,20 +1975,20 @@ class PlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
-		var up = controls.UP;
-		var right = controls.RIGHT;
-		var down = controls.DOWN;
-		var left = controls.LEFT;
+		var up = controls.NOTE_UP;
+		var right = controls.NOTE_RIGHT;
+		var down = controls.NOTE_DOWN;
+		var left = controls.NOTE_LEFT;
 
-		var upP = controls.UP_P;
-		var rightP = controls.RIGHT_P;
-		var downP = controls.DOWN_P;
-		var leftP = controls.LEFT_P;
+		var upP = controls.NOTE_UP_P;
+		var rightP = controls.NOTE_RIGHT_P;
+		var downP = controls.NOTE_DOWN_P;
+		var leftP = controls.NOTE_LEFT_P;
 
-		var upR = controls.UP_R;
-		var rightR = controls.RIGHT_R;
-		var downR = controls.DOWN_R;
-		var leftR = controls.LEFT_R;
+		var upR = controls.NOTE_UP_R;
+		var rightR = controls.NOTE_RIGHT_R;
+		var downR = controls.NOTE_DOWN_R;
+		var leftR = controls.NOTE_LEFT_R;
 
 		var controlArray:Array<Bool> = [leftP, downP, upP, rightP];
 
@@ -2078,6 +2087,11 @@ class PlayState extends MusicBeatState
 					}
 				 */
 			}
+		}
+		else
+		{
+			if(Options.getData('ghost-tapping'))
+				badNoteCheck();
 		}
 
 		if ((up || right || down || left) && !boyfriend.stunned && generatedMusic)
@@ -2188,10 +2202,10 @@ class PlayState extends MusicBeatState
 	{
 		// just double pasting this shit cuz fuk u
 		// REDO THIS SYSTEM!
-		var upP = controls.UP_P;
-		var rightP = controls.RIGHT_P;
-		var downP = controls.DOWN_P;
-		var leftP = controls.LEFT_P;
+		var upP = controls.NOTE_UP_P;
+		var rightP = controls.NOTE_RIGHT_P;
+		var downP = controls.NOTE_DOWN_P;
+		var leftP = controls.NOTE_LEFT_P;
 
 		if (leftP)
 			noteMiss(0);
@@ -2344,18 +2358,21 @@ class PlayState extends MusicBeatState
 		gf.playAnim('scared', true);
 	}
 
+	var lastStepHit:Int = -1;
 	override function stepHit()
 	{
 		super.stepHit();
-		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
+		if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > 20
+			|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > 20))
 		{
 			resyncVocals();
 		}
 
-		if (dad.curCharacter == 'spooky' && curStep % 4 == 2)
-		{
-			// dad.dance();
+		if(curStep == lastStepHit) {
+			return;
 		}
+
+		lastStepHit = curStep;
 	}
 
 	var lightningStrikeBeat:Int = 0;

@@ -346,35 +346,47 @@ class Paths
 		return null;
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?library:String)
+	inline static public function getSparrowAtlas(key:String, ?library:String, ?customPath:Bool = false)
 	{
+		if(customPath)
+			return FlxAtlasFrames.fromSparrow(image(key, library, customPath), file('$key.xml', library));
+
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
 
-	inline static public function getPackerAtlas(key:String, ?library:String)
+	inline static public function getPackerAtlas(key:String, ?library:String, ?customPath:Bool = false)
 	{
+		if(customPath)
+			return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library, customPath), file('$key.txt', library));
+
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
 
-	static public function parseJson(key:String):Dynamic
+	static public function parseJson(key:String, ?customPath:Bool = false):Dynamic
 	{
 		var json:Dynamic = null;
 
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		if(!customPath)
 		{
-			if(Mods.activeMods.length > 0)
+			for(mod in Mods.activeMods)
 			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
+				if(Mods.activeMods.length > 0)
 				{
-					return Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/$key.json'));
+					if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
+						return Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/$key.json'));
 				}
 			}
+		}
+		else
+		{
+			if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$key.json'))
+				return Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$key.json'));
 		}
 		#end
 		
 		if(Assets.exists('assets/$key.json'))
-			return Json.parse(Assets.getText('$key.json'));
+			return Json.parse(Assets.getText('assets/$key.json'));
 
 		return null;
 	}

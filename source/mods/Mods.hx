@@ -12,6 +12,9 @@ class Mods
     public static function init()
     {
         // loads funny mods from save data
+        if(Options.getData("mods") == null)
+            Options.setData("mods", []);
+        
         mods = [];
 
         mods = Options.getData("mods");

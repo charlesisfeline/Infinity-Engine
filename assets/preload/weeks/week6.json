@@ -1,0 +1,25 @@
+{
+    "songs": [
+        {
+            "displayName": "Senpai",
+            "song": "Senpai",
+            "icon": "senpai",
+            "color": "ffaa6f",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Roses",
+            "song": "Roses",
+            "icon": "senpai",
+            "color": "ffaa6f",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Thorns",
+            "song": "Thorns",
+            "icon": "spirit",
+            "color": "ff3c6e",
+            "difficulties": ["easy", "normal", "hard"]
+        }
+    ]
+}
