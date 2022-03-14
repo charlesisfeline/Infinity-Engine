@@ -185,6 +185,10 @@ class TitleState extends MusicBeatState
 			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
+
+			FlxG.sound.music.pause();
+			FlxG.sound.music.time = 0;
+			FlxG.sound.music.play();
 		}
 
 		Conductor.changeBPM(102);
@@ -399,13 +403,13 @@ class TitleState extends MusicBeatState
 	{
 		super.beatHit();
 
-		logoBl.animation.play('bump');
+		logoBl.animation.play('bump', true);
 		danceLeft = !danceLeft;
 
 		if (danceLeft)
-			gfDance.animation.play('danceRight');
+			gfDance.animation.play('danceRight', true);
 		else
-			gfDance.animation.play('danceLeft');
+			gfDance.animation.play('danceLeft', true);
 
 		FlxG.log.add(curBeat);
 

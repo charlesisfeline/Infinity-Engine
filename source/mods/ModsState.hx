@@ -94,8 +94,8 @@ class ModsState extends MusicBeatState
 
         FlxG.camera.followLerp = 0.1 * (60 / Main.display.currentFPS);
 
-        var up = controls.UI_UP;
-        var down = controls.UI_DOWN;
+        var up = controls.UI_UP_P;
+        var down = controls.UI_DOWN_P;
         var accept = controls.ACCEPT;
 
         if(noMods && FlxG.keys.justPressed.R)
@@ -160,6 +160,9 @@ class ModsState extends MusicBeatState
     }
 }
 
+// MODS MENU CRASHES THE GAME!!!!
+// REMINDER TO FIX!!!!!!!!!!!!!!!
+
 class ModGroup extends FlxSpriteGroup
 {
     public var tracker:FlxObject;
@@ -176,7 +179,7 @@ class ModGroup extends FlxSpriteGroup
         bg.alpha = 0.6;
         add(bg);
 
-        var funnyData:ModInfo = Paths.parseJson(mod[0] + "_mod_info", true);
+        var funnyData:ModInfo = Paths.parseJson(mod[0] + "/_mod_info", true);
 
         var modName:FlxText = new FlxText(5, 5, 450, funnyData.name, 24);
         modName.font = Paths.font("vcr");
@@ -204,7 +207,7 @@ class ModGroup extends FlxSpriteGroup
 
         var funnySprite:FlxSprite = new FlxSprite(460, 5);
         
-        #if sys
+        #if (MODS_ALLOWED && sys)
         if(sys.FileSystem.exists(Sys.getCwd() + 'mods/${mod[0]}/_mod_icon.png'))
         {
             var bitmapData:BitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/${mod[0]}/_mod_icon.png');
@@ -216,7 +219,7 @@ class ModGroup extends FlxSpriteGroup
         {
         #end
         funnySprite.makeGraphic(150, 150, FlxColor.GRAY);
-        #if sys
+        #if (MODS_ALLOWED && sys)
         }
         #end
 

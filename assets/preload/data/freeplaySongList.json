@@ -1,0 +1,137 @@
+{
+    "songs": [
+        {
+            "displayName": "Tutorial",
+            "song": "Tutorial",
+            "icon": "gf",
+            "color": "a5004d",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Bopeebo",
+            "song": "Bopeebo",
+            "icon": "dad",
+            "color": "af66ce",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Fresh",
+            "song": "Fresh",
+            "icon": "dad",
+            "color": "af66ce",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Dad Battle",
+            "song": "Dad Battle",
+            "icon": "dad",
+            "color": "af66ce",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Spookeez",
+            "song": "Spookeez",
+            "icon": "spooky",
+            "color": "d57e00",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "South",
+            "song": "South",
+            "icon": "spooky",
+            "color": "d57e00",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Monster",
+            "song": "Monster",
+            "icon": "monster",
+            "color": "f3ff6e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Pico",
+            "song": "Pico",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Philly Nice",
+            "song": "Philly Nice",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Blammed",
+            "song": "Blammed",
+            "icon": "pico",
+            "color": "b7d855",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Satin Panties",
+            "song": "Satin Panties",
+            "icon": "mom",
+            "color": "d8558e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "High",
+            "song": "High",
+            "icon": "mom",
+            "color": "d8558e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "M.I.L.F",
+            "song": "M.I.L.F",
+            "icon": "mom",
+            "color": "d8558e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Cocoa",
+            "song": "Cocoa",
+            "icon": "parents-christmas",
+            "color": "d8558e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Eggnog",
+            "song": "Eggnog",
+            "icon": "parents-christmas",
+            "color": "d8558e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Winter Horrorland",
+            "song": "Winter Horrorland",
+            "icon": "monster",
+            "color": "f3ff6e",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Senpai",
+            "song": "Senpai",
+            "icon": "senpai",
+            "color": "ffaa6f",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Roses",
+            "song": "Roses",
+            "icon": "senpai",
+            "color": "ffaa6f",
+            "difficulties": ["easy", "normal", "hard"]
+        },
+        {
+            "displayName": "Thorns",
+            "song": "Thorns",
+            "icon": "spirit",
+            "color": "ff3c6e",
+            "difficulties": ["easy", "normal", "hard"]
+        }
+    ]
+}

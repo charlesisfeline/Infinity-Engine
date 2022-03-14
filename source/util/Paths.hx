@@ -399,6 +399,10 @@ class Paths
 		return code;
 	}
 
+	inline static public function formatToSongPath(path:String) {
+		return path.toLowerCase().replace(' ', '-');
+	}
+
 	inline public static function openURL(url:String)
 	{
 		#if linux

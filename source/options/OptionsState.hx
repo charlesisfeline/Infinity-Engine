@@ -2,38 +2,48 @@ package options;
 
 import ui.Alphabet;
 import states.MusicBeatState;
-import controls.Controls.Control;
-import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
 
 class OptionsState extends MusicBeatState
 {
-	var selector:FlxText;
 	var curSelected:Int = 0;
 
-	var controlsStrings:Array<String> = [];
+	var menuBG:FlxSprite;
+	var grpOptions:FlxTypedGroup<Alphabet>;
 
-	private var grpControls:FlxTypedGroup<Alphabet>;
+	var options:Array<String> = [
+		"Graphics",
+		"Gameplay",
+		"Tools",
+		"Misc"
+	];
 
 	override function create()
 	{
 		super.create();
 		
-		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		menuBG.color = 0xFFea71fd;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.antialiasing = true;
 		add(menuBG);
+
+		grpOptions = new FlxTypedGroup<Alphabet>();
+		add(grpOptions);
+
+		for(i in 0...options.length)
+		{
+			var alphabet:Alphabet = new Alphabet(0, 0, options[i], true);
+			alphabet.screenCenter();
+			alphabet.y += (100 * (i - (options.length / 2))) + 50;
+
+			grpOptions.add(alphabet);
+		}
 	}
 
 	override function update(elapsed:Float)

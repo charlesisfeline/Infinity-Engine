@@ -1,6 +1,7 @@
 package game;
 
 import flixel.FlxG;
+import util.CoolUtil;
 
 using StringTools;
 
@@ -51,14 +52,7 @@ class Highscore
 
 	public static function formatSong(song:String, diff:Int):String
 	{
-		var daSong:String = song.replace(" ", "-");
-
-		if (diff == 0)
-			daSong += '-easy';
-		else if (diff == 2)
-			daSong += '-hard';
-
-		return daSong;
+		return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
 	}
 
 	public static function getScore(song:String, diff:Int):Int
