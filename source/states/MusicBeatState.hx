@@ -9,6 +9,7 @@ import flixel.addons.ui.FlxUIState;
 import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
 import game.Conductor;
+import util.Cache;
 
 class MusicBeatState extends FlxUIState
 {
@@ -25,6 +26,8 @@ class MusicBeatState extends FlxUIState
 	override public function new(?skipTransition:Bool = false)
 	{
 		super();
+
+		Cache.clearCache();
 
 		transIn = FlxTransitionableState.defaultTransIn;
         transOut = FlxTransitionableState.defaultTransOut;

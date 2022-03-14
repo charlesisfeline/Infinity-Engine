@@ -18,6 +18,9 @@ class Options
 				case "float" | "int" | "string":
 					if(getData(option[0]) == null)
 						setData(option[0], option[2][0]);
+				case "misc":
+					if(getData(option[0]) == null)
+						setData(option[0], option[2]);
 			}
 		}
 	}
@@ -75,6 +78,11 @@ class Options
 			"string", // the type
 			//["None", "osu!", "Bloop", "Vine Boom", "Spamton Heal", "Sr Pelo Scream"] // the value to set to
 			"None"
+		],
+		[
+			"mods", // the option's save data name
+			"misc", // the type
+			[] // the value to set to
 		],
 	];
 }

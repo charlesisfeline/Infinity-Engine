@@ -23,13 +23,13 @@ class OutdatedState extends MusicBeatState
 
 		var ver = "v" + EngineSettings.version.trim();
 		var txt:FlxText = new FlxText(0, 0, FlxG.width,
-			"Hello! You're running an outdated version of the engine.\nYour version is:"
+			"Hello! You're running an outdated version of the engine.\nYour version is: "
 			+ ver
 			+ " while the most recent version is "
 			+ "v" + TitleState.updateVersion
 			+ "!\n\nPress SPACE to go to the Github, or ESCAPE to ignore.\nThis screen can be disabled in options.",
 			32);
-		txt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
+		txt.setFormat(Paths.font("vcr"), 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();
 		add(txt);
 	}

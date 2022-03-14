@@ -69,7 +69,7 @@ class FreeplayState extends MusicBeatState
 		loadSongs();
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
+		scoreText.setFormat(Paths.font("vcr"), 32, FlxColor.WHITE, RIGHT);
 
 		var scoreBG:FlxSprite = new FlxSprite(scoreText.x - 6, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
@@ -137,7 +137,7 @@ class FreeplayState extends MusicBeatState
 		{
 			var week = weekJsonDirs[i];
 
-			var json:Dynamic = Paths.parseJson('assets/weeks/$week');
+			var json:Dynamic = Paths.parseJson('weeks/$week');
 			var jsonSongs:Array<FreeplaySong> = json.songs;
 
 			for(song in jsonSongs)

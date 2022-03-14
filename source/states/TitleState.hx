@@ -33,6 +33,7 @@ import openfl.Assets;
 import flixel.input.keyboard.FlxKey;
 import options.Options;
 import game.Highscore;
+import mods.Mods;
 
 using StringTools;
 
@@ -57,21 +58,37 @@ class TitleState extends MusicBeatState
 
 	var wackyImage:FlxSprite;
 
+	var rembrCount:Int = 0;
+
+	function rembr()
+	{
+		rembrCount++;
+		trace("rembr " + rembrCount);
+	}
+
 	override public function create():Void
 	{
+		super.create();
+
+		rembr();
 		FlxG.fixedTimestep = false;
 
 		#if CHECK_FOR_UPDATES
 		if(!initialized)
 		{
 			trace('checking for update');
+			rembr();
 			var http = new haxe.Http("https://raw.githubusercontent.com/CubeSword/Infinity-Engine/main/gitVersion.txt");
+			rembr();
 			
 			http.onData = function (data:String)
 			{
 				updateVersion = data.split('\n')[0].trim();
+				rembr();
 				var curVersion:String = EngineSettings.version.trim();
+				rembr();
 				trace('version online: ' + updateVersion + ', your version: ' + curVersion + '!');
+				trace("??????????????????????????????????????????????//");
 				if(updateVersion != curVersion) {
 					trace('versions arent matching!');
 					mustUpdate = true;
@@ -92,15 +109,18 @@ class TitleState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
 
+		rembr();
+
 		PlayerSettings.init();
+		trace("PLAYER SETTINGS INIT");
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
-
-		// DEBUG BULLSHIT
-
-		super.create();
+		trace("INTRO TEXT INIT");
 
 		Options.init();
+		trace("OPTIONS INIT");
+		Mods.init();
+		trace("MODS INIT");
 
 		Highscore.load();
 
