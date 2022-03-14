@@ -346,6 +346,24 @@ class FreeplayState extends MusicBeatState
 
 		PlayState.storyWeek = null;
 
+		switch(songName)
+		{
+			case 'tutorial':
+				PlayState.storyWeek = 0;
+			case 'bopeebo' | 'fresh' | 'dad-battle':
+				PlayState.storyWeek = 1;
+			case 'spookeez' | 'south' | 'monster':
+				PlayState.storyWeek = 2;
+			case 'pico' | 'philly-nice' | 'blammed':
+				PlayState.storyWeek = 3;
+			case 'satin-panties' | 'high' | 'm.i.l.f':
+				PlayState.storyWeek = 4;
+			case 'cocoa' | 'eggnog' | 'winter-horrorland':
+				PlayState.storyWeek = 5;
+			case 'senpai' | 'roses' | 'thorns':
+				PlayState.storyWeek = 6;
+		}
+
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
 		if(songs[curSelected].difficulties != null && songs[curSelected].difficulties.length > 0)
