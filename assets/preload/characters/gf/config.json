@@ -1,0 +1,147 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [
+				0,
+				0
+			],
+			"anim": "danceLeft",
+			"fps": 24,
+			"name": "danceLeft",
+			"indices": []
+		},
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "danceRight",
+			"indices": [],
+			"name": "danceRight"
+		},
+		{
+			"offsets": [
+				175,
+				2
+			],
+			"loop": true,
+			"fps": 24,
+			"anim": "hairBlow",
+			"indices": [],
+			"name": "Hair blowing"
+		},
+		{
+			"offsets": [
+				84,
+				0
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "hairFall",
+			"indices": [],
+			"name": "Hair Landing"
+		},
+		{
+			"offsets": [
+				-72,
+				4
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "cheer",
+			"indices": [],
+			"name": "GF Cheer"
+		},
+		{
+			"offsets": [
+				-1,
+				-12
+			],
+			"loop": true,
+			"fps": 24,
+			"anim": "scared",
+			"indices": [],
+			"name": "GF FEAR "
+		},
+		{
+			"offsets": [
+				-75,
+				-15
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "sad",
+			"indices": [],
+			"name": "gf sad"
+		},
+		{
+			"offsets": [
+				-57,
+				-10
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "singLEFT",
+			"indices": [],
+			"name": "GF left note"
+		},
+		{
+			"offsets": [
+				-72,
+				-7
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "GF Down Note"
+		},
+		{
+			"offsets": [
+				-66,
+				11
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "singUP",
+			"indices": [],
+			"name": "GF Up Note"
+		},
+		{
+			"offsets": [
+				-60,
+				-10
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "singRIGHT",
+			"indices": [],
+			"name": "GF Right Note"
+		}
+	],
+	"no_antialiasing": false,
+	"position": [
+		140,
+		0
+	],
+	"healthicon": "gf",
+	"flip_x": false,
+	"healthbar_colors": [
+		165,
+		0,
+		77
+	],
+	"camera_position": [
+		0,
+		0
+	],
+	"sing_duration": 4,
+	"scale": 1,
+	"characters": [
+		"speakers",
+		"gf"
+	]
+}

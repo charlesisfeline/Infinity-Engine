@@ -331,6 +331,8 @@ class FreeplayState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
+		var songName:String = Paths.formatToSongPath(songs[curSelected].songName.toLowerCase());
+		
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 
 		curSelected += change;

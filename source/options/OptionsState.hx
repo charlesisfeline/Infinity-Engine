@@ -30,7 +30,6 @@ class OptionsState extends MusicBeatState
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.antialiasing = true;
 		add(menuBG);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -44,13 +43,47 @@ class OptionsState extends MusicBeatState
 
 			grpOptions.add(alphabet);
 		}
+
+		changeSelection();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		menuBG.antialiasing = Options.getData('anti-aliasing');
 
 		if(controls.BACK)
 			FlxG.switchState(new states.MainMenuState());
+
+		if(controls.UI_UP_P)
+			changeSelection(-1);
+		
+		if(controls.UI_DOWN_P)
+			changeSelection(1);
+
+		if(controls.ACCEPT)
+		{
+			persistentUpdate = false;
+			openSubState(new controls.ControlsSubState());
+		}
+	}
+
+	function changeSelection(?change:Int = 0)
+	{
+		FlxG.sound.play(Paths.sound('scrollMenu'));
+
+		curSelected += change;
+
+		if(curSelected < 0)
+			curSelected = options.length - 1;
+
+		if(curSelected > options.length - 1)
+			curSelected = 0;
+
+		grpOptions.forEachAlive(function(option:Alphabet) {
+			option.alpha = 0.6;
+		});
+
+		grpOptions.members[curSelected].alpha = 1;
 	}
 }

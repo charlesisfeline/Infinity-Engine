@@ -10,7 +10,7 @@ class Options
 		
 		for(option in defaultOptions)
 		{
-			switch(option[2])
+			switch(option[1])
 			{
 				case "bool":
 					if(getData(option[0]) == null)
@@ -78,6 +78,36 @@ class Options
 			"string", // the type
 			//["None", "osu!", "Bloop", "Vine Boom", "Spamton Heal", "Sr Pelo Scream"] // the value to set to
 			"None"
+		],
+		[
+			"keybinds",
+			"misc",
+			[
+				["SPACE"],
+				["A", "D"],
+				["A", "SPACE", "D"],
+				["A", "S", "W", "D"],
+				["A", "S", "SPACE", "W", "D"],
+				["S", "D", "F", "J", "K", "L"],
+				["S", "D", "F", "SPACE", "J", "K", "L"],
+				["A", "S", "D", "F", "H", "J", "K", "L"],
+				["A", "S", "D", "F", "SPACE", "H", "J", "K", "L"]
+			]
+		],
+		[
+			"alt-keybinds",
+			"misc",
+			[
+				["SPACE"],
+				["A", "D"],
+				["LEFT", "SPACE", "D"],
+				["LEFT", "DOWN", "UP", "RIGHT"],
+				["LEFT", "DOWN", "SPACE", "UP", "RIGHT"],
+				["W", "E", "R", "U", "I", "O"],
+				["W", "E", "R", "G", "U", "I", "O"],
+				["Q", "W", "E", "R", "U", "I", "O", "P"],
+				["Q", "W", "E", "R", "G", "U", "I", "O", "P"],
+			]
 		]
 	];
 }
