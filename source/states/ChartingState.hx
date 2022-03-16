@@ -126,6 +126,8 @@ class ChartingState extends MusicBeatState
 				player2: 'dad',
 				speed: 1,
 				validScore: false,
+				ui_Skin: "default",
+				keyCount: 4,
 				stage: 'stage'
 			};
 		}

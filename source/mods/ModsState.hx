@@ -1,12 +1,14 @@
 package mods;
 
+#if desktop
+import util.Discord.DiscordClient;
+#end
 import states.MusicBeatState;
 import flixel.addons.transition.FlxTransitionableState;
 import lime.app.Application;
 import states.MainMenuState;
 import openfl.display.BitmapData;
 import flixel.text.FlxText;
-import util.Discord.DiscordClient;
 import mods.Mods.ModInfo;
 import flixel.util.FlxColor;
 import flixel.FlxG;
@@ -83,7 +85,7 @@ class ModsState extends MusicBeatState
 
         super.create();
 
-        #if discord_rpc
+        #if desktop
         DiscordClient.changePresence("In Mods Menu", null);
         #end
     }

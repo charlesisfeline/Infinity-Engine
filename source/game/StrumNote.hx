@@ -14,10 +14,6 @@ class StrumNote extends FlxSprite
 	public var noteData:Int = 0;
 
 	public static var swagWidth:Float = 160 * 0.7;
-	public static var PURP_NOTE:Int = 0;
-	public static var GREEN_NOTE:Int = 2;
-	public static var BLUE_NOTE:Int = 1;
-	public static var RED_NOTE:Int = 3;
 
 	public function new(x:Float, y:Float, noteData:Int, ?noteskin:String = "default")
 	{
@@ -25,72 +21,98 @@ class StrumNote extends FlxSprite
 
         this.noteData = noteData;
 		loadNoteSkin(noteskin);
-
-		switch (noteData)
-		{
-			case 0:
-				x += swagWidth * 0;
-			case 1:
-				x += swagWidth * 1;
-			case 2:
-				x += swagWidth * 2;
-			case 3:
-				x += swagWidth * 3;
-		}
 	}
 
 	public function loadNoteSkin(?noteskin:String = "default")
 	{
+		trace("CURRENT NOTE DATA:" + noteData);
+
 		if(noteskin.endsWith("-pixel"))
 		{
 			loadGraphic(Paths.image('ui-skins/$noteskin/notes'), true, 17, 17);
 
-			animation.add('strum', [noteData]);
-            animation.add('pressed', [noteData + 4], 12, false);
-            animation.add('confirm', [noteData + 8], 24, false);
-
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-			updateHitbox();
-		} else {
-			frames = Paths.getSparrowAtlas('ui-skins/$noteskin/notes');
-
-            switch(noteData)
+            switch(Math.abs(noteData))
             {
                 case 0:
-			        animation.addByPrefix('arrowLEFT0', 'strum', 24, true);
-                    animation.addByPrefix('left press', 'pressed', 24, false);
-                    animation.addByPrefix('left confirm', 'confirm', 24, false);
+					animation.add('static', [0]);
+					animation.add('pressed', [4, 8], 12, false);
+					animation.add('confirm', [12, 16], 24, false);		
                 case 1:
-			        animation.addByPrefix('arrowDOWN0', 'strum', 24, true);
-                    animation.addByPrefix('down press', 'pressed', 24, false);
-                    animation.addByPrefix('down confirm', 'confirm', 24, false);
+					animation.add('static', [1]);
+					animation.add('pressed', [5, 9], 12, false);
+					animation.add('confirm', [13, 17], 24, false);
                 case 2:
-			        animation.addByPrefix('arrowUP0', 'strum', 24, true);
-                    animation.addByPrefix('up press', 'pressed', 24, false);
-                    animation.addByPrefix('up confirm', 'confirm', 24, false);
+					animation.add('static', [2]);
+					animation.add('pressed', [6, 10], 12, false);
+					animation.add('confirm', [14, 18], 24, false);		
                 case 3:
-			        animation.addByPrefix('arrowRIGHT0', 'strum');
-                    animation.addByPrefix('right press', 'pressed', 24, false);
-                    animation.addByPrefix('right confirm', 'confirm', 24, false);
+					animation.add('static', [3]);
+					animation.add('pressed', [7, 11], 12, false);
+					animation.add('confirm', [15, 19], 24, false);		
+            }
+
+			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			antialiasing = false;
+		} else {
+			frames = Paths.getSparrowAtlas('ui-skins/$noteskin/strums');
+
+            switch(Math.abs(noteData))
+            {
+                case 0:
+			        animation.addByPrefix('static', 'left static', 24, true);
+                    animation.addByPrefix('pressed', 'left press', 24, false);
+                    animation.addByPrefix('confirm', 'left confirm', 24, false);
+                case 1:
+			        animation.addByPrefix('static', 'down static', 24, true);
+                    animation.addByPrefix('pressed', 'down press', 24, false);
+                    animation.addByPrefix('confirm', 'down confirm', 24, false);
+                case 2:
+			        animation.addByPrefix('static', 'up static', 24, true);
+                    animation.addByPrefix('pressed', 'up press', 24, false);
+                    animation.addByPrefix('confirm', 'up confirm', 24, false);
+                case 3:
+			        animation.addByPrefix('static', 'right static', 24, true);
+                    animation.addByPrefix('pressed', 'right press', 24, false);
+                    animation.addByPrefix('confirm', 'right confirm', 24, false);
             }
 
 			setGraphicSize(Std.int(width * 0.7));
-			updateHitbox();
 			antialiasing = Options.getData('anti-aliasing');
 		}
 
-        playAnim('strum');
+		updateHitbox();
+
+        playAnim('static');
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if(animation.curAnim.name == 'confirm' && !PlayState.curUISkin.endsWith('-pixel'))
+			centerOrigin();
 	}
 
     public function playAnim(anim:String, ?force:Bool = false)
     {
-        animation.play(anim, force);
-		centerOffsets();
+		if(animation.getByName(anim) != null)
+		{
+			animation.play(anim, force);
+		}
+
 		centerOrigin();
+
+		if(!PlayState.curUISkin.endsWith('-pixel'))
+		{
+			offset.x = frameWidth / 2;
+			offset.y = frameHeight / 2;
+	
+			var scale = 0.7;
+	
+			offset.x -= 156 * scale / 2;
+			offset.y -= 156 * scale / 2;
+		}
+		else
+			centerOffsets();
     }
 }

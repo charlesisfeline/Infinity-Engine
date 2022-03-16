@@ -23,6 +23,8 @@ class Note extends FlxSprite
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
 
+	public var shouldHit:Bool = true;
+
 	public var noteScore:Float = 1;
 
 	public static var swagWidth:Float = 160 * 0.7;
@@ -41,7 +43,7 @@ class Note extends FlxSprite
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
-		x += 50;
+		x += 85;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
@@ -79,23 +81,24 @@ class Note extends FlxSprite
 
 			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 			updateHitbox();
+			antialiasing = false;
 		} else {
 			frames = Paths.getSparrowAtlas('ui-skins/$noteskin/notes');
 
-			animation.addByPrefix('greenScroll', 'green0');
-			animation.addByPrefix('redScroll', 'red0');
-			animation.addByPrefix('blueScroll', 'blue0');
-			animation.addByPrefix('purpleScroll', 'purple0');
+			animation.addByPrefix('greenScroll', 'up0');
+			animation.addByPrefix('redScroll', 'right0');
+			animation.addByPrefix('blueScroll', 'down0');
+			animation.addByPrefix('purpleScroll', 'left0');
 
-			animation.addByPrefix('purpleholdend', 'pruple end hold');
-			animation.addByPrefix('greenholdend', 'green hold end');
-			animation.addByPrefix('redholdend', 'red hold end');
-			animation.addByPrefix('blueholdend', 'blue hold end');
+			animation.addByPrefix('purpleholdend', 'left hold end0');
+			animation.addByPrefix('greenholdend', 'up hold end0');
+			animation.addByPrefix('redholdend', 'right hold end0');
+			animation.addByPrefix('blueholdend', 'down hold end0');
 
-			animation.addByPrefix('purplehold', 'purple hold piece');
-			animation.addByPrefix('greenhold', 'green hold piece');
-			animation.addByPrefix('redhold', 'red hold piece');
-			animation.addByPrefix('bluehold', 'blue hold piece');
+			animation.addByPrefix('purplehold', 'left hold0');
+			animation.addByPrefix('greenhold', 'up hold0');
+			animation.addByPrefix('redhold', 'right hold0');
+			animation.addByPrefix('bluehold', 'down hold0');
 
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
@@ -106,16 +109,16 @@ class Note extends FlxSprite
 		{
 			case 0:
 				x += swagWidth * 0;
-				animation.play('purpleScroll');
+				playAnim('purpleScroll');
 			case 1:
 				x += swagWidth * 1;
-				animation.play('blueScroll');
+				playAnim('blueScroll');
 			case 2:
 				x += swagWidth * 2;
-				animation.play('greenScroll');
+				playAnim('greenScroll');
 			case 3:
 				x += swagWidth * 3;
-				animation.play('redScroll');
+				playAnim('redScroll');
 		}
 
 		// trace(prevNote);
@@ -130,34 +133,36 @@ class Note extends FlxSprite
 			switch (noteData)
 			{
 				case 2:
-					animation.play('greenholdend');
+					playAnim('greenholdend');
 				case 3:
-					animation.play('redholdend');
+					playAnim('redholdend');
 				case 1:
-					animation.play('blueholdend');
+					playAnim('blueholdend');
 				case 0:
-					animation.play('purpleholdend');
+					playAnim('purpleholdend');
 			}
 
 			updateHitbox();
 
 			x -= width / 2;
 
-			if (PlayState.curStage.startsWith('school'))
+			if (PlayState.curUISkin.endsWith('-pixel'))
 				x += 30;
+			else
+				x + 35;
 
 			if (prevNote.isSustainNote)
 			{
 				switch (prevNote.noteData)
 				{
 					case 0:
-						prevNote.animation.play('purplehold');
+						prevNote.playAnim('purplehold');
 					case 1:
-						prevNote.animation.play('bluehold');
+						prevNote.playAnim('bluehold');
 					case 2:
-						prevNote.animation.play('greenhold');
+						prevNote.playAnim('greenhold');
 					case 3:
-						prevNote.animation.play('redhold');
+						prevNote.playAnim('redhold');
 				}
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
@@ -171,30 +176,70 @@ class Note extends FlxSprite
 	{
 		super.update(elapsed);
 
-		if (mustPress)
+		if(this != null)
 		{
-			// The * 0.5 is so that it's easier to hit them too late, instead of too early
-			if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
-				canBeHit = true;
+			if(mustPress)
+			{
+				if (isSustainNote)
+				{
+					if(shouldHit)
+					{
+						if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+							&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+							canBeHit = true;
+						else
+							canBeHit = false;
+					}
+					else
+					{
+						if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset * 0.3
+							&& strumTime < Conductor.songPosition + Conductor.safeZoneOffset * 0.2)
+							canBeHit = true;
+						else
+							canBeHit = false;
+					}
+				}
+				else
+				{
+					/*
+					TODO: make this shit use something from the arrow config .txt file
+					*/ 
+					if(shouldHit)
+					{
+						if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
+							&& strumTime < Conductor.songPosition + Conductor.safeZoneOffset)
+							canBeHit = true;
+						else
+							canBeHit = false;
+					}
+					else
+					{
+						if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset * 0.3
+							&& strumTime < Conductor.songPosition + Conductor.safeZoneOffset * 0.2)
+							canBeHit = true;
+						else
+							canBeHit = false;
+					}
+				}
+	
+				if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
+					tooLate = true;
+			}
 			else
+			{
 				canBeHit = false;
-
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
-				tooLate = true;
+	
+				if (strumTime <= Conductor.songPosition)
+					wasGoodHit = true;
+			}
 		}
-		else
-		{
-			canBeHit = false;
+	}
 
-			if (strumTime <= Conductor.songPosition)
-				wasGoodHit = true;
-		}
-
-		if (tooLate)
+    public function playAnim(anim:String, ?force:Bool = false)
+	{
+		if(animation.getByName(anim) != null)
 		{
-			if (alpha > 0.3)
-				alpha = 0.3;
+			animation.play(anim, force);
 		}
 	}
 }

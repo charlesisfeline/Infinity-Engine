@@ -29,7 +29,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 	var curSelected:Int = 0;
 
-	var binds:Array<String> = [];
+	var binds:Array<Array<String>> = [];
 
 	var changingBinds:Bool = false;
 
@@ -37,7 +37,7 @@ class ControlsSubState extends MusicBeatSubstate
 	{
 		super.create();
 
-		binds = Options.getData('keybinds')[keyCount - 1];
+		binds = Options.getData('keybinds');
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		menuBG.color = 0xFFea71fd;
@@ -97,13 +97,19 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 	}
 
+	var exiting:Bool = false;
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		menuBG.antialiasing = Options.getData('anti-aliasing');
 
-		if(controls.BACK)
+		if(controls.BACK && !exiting)
 		{
+			exiting = true;
+
+			Options.setData('keybinds', binds);
+
 			daNotes.forEachAlive(function(note:StrumNote) {
 				FlxTween.tween(note, {alpha: 0}, 1, {ease: FlxEase.cubeOut});
 			});
@@ -142,9 +148,8 @@ class ControlsSubState extends MusicBeatSubstate
 				checkingForKeys = true;
 			
 			if(FlxG.keys.getIsDown().length > 0 && checkingForKeys) {
-				binds[curSelected] = FlxG.keys.getIsDown()[0].ID.toString();
+				binds[keyCount - 1][curSelected] = FlxG.keys.getIsDown()[0].ID.toString();
 
-				Options.setData('keybinds', binds);
 				changingBinds = false;
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
@@ -154,7 +159,7 @@ class ControlsSubState extends MusicBeatSubstate
 		{
 			var key:FlxText = daKeybinds.members[i];
 
-			key.text = binds[i];
+			key.text = binds[keyCount - 1][i];
 			key.x = (daNotes.members[i].x + (daNotes.members[i].width / 2) - (24)) + 5;
 		}
 	}

@@ -107,10 +107,17 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				case "Resume":
 					close();
+
 				case "Restart Song":
 					FlxG.resetState();
+					
 				case "Exit to menu":
-					FlxG.switchState(new states.MainMenuState());
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+
+					if(PlayState.isStoryMode)
+						FlxG.switchState(new states.StoryMenuState());
+					else
+						FlxG.switchState(new states.FreeplayState());
 			}
 		}
 

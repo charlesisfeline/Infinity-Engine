@@ -17,7 +17,7 @@ class Options
 						setData(option[0], option[2]);
 				case "float" | "int" | "string":
 					if(getData(option[0]) == null)
-						setData(option[0], option[2][0]);
+						setData(option[0], option[2]);
 				case "misc":
 					if(getData(option[0]) == null)
 						setData(option[0], option[2]);
@@ -78,6 +78,12 @@ class Options
 			"string", // the type
 			//["None", "osu!", "Bloop", "Vine Boom", "Spamton Heal", "Sr Pelo Scream"] // the value to set to
 			"None"
+		],
+		[
+			"ui-skin", // the option's save data name
+			"string", // the type
+			//["None", "osu!", "Bloop", "Vine Boom", "Spamton Heal", "Sr Pelo Scream"] // the value to set to
+			"default"
 		],
 		[
 			"keybinds",

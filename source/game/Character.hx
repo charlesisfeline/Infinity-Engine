@@ -1,228 +1,92 @@
 package game;
 
+import game.CharacterPart;
 import options.Options;
 import states.PlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
 
 using StringTools;
 
-typedef CharAnimationData = {
-	var offsets:Array<Float>;
-	var loop:Bool;
-	var anim:String;
-	var fps:Int;
-	var name:String;
-	var indices:Array<Int>;
-};
+/**
+	This `Character.hx` is meant for allowing characters to use more than one spritesheet.
+	This should help optimize characters such as Girlfriend with her stupidly large spritesheet.
+	This is not intended for Shaggy/Matt type shit, This is for optimization purposes.
 
-typedef CharacterData = {
-	var animations:Array<CharAnimationData>;
-	var no_antialiasing:Bool;
-	var position:Array<Float>;
-	var healthicon:String;
-	var flip_x:Bool;
-	var healthbar_colors:Array<Int>;
-	var camera_position:Array<Int>;
-	var sing_duration:Float;
-	var scale:Float;
-	var packer_atlas:Bool;
-};
-
-class Character extends FlxSprite
+	@param X             The X Position of the Character
+	@param Y             The Y Position of the Character
+	@param Character     The character itself lol
+*/
+class Character extends FlxTypedGroup<CharacterPart>
 {
-	public var animOffsets:Map<String, Array<Dynamic>>;
-	public var debugMode:Bool = false;
-
-	public var danceLeftRight:Bool = false;
-
-	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
-
-	public var singDuration:Float = 6.1;
-	public var healthColor:Array<Int> = [0, 0, 0];
 	public var healthIcon:String = 'bf';
-
-	public var cameraPosition:Array<Int> = [0, 0];
-
-	public var holdTimer:Float = 0;
+	public var healthColor:Array<Int> = [0, 0, 0];
 
 	public var json:CharacterData = null;
 
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
-	{
-		super(x, y);
+	public var isPlayer:Bool = false;
 
-		animOffsets = new Map<String, Array<Dynamic>>();
+	public var cameraPosition:Array<Int> = [0, 0];
+
+	override public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false)
+	{
+		super();
 		this.isPlayer = isPlayer;
 
-		loadCharacter(character);
+		loadCharacter(x, y, character);
 	}
 
-	public function loadCharacter(?character:String = "bf")
+	public function loadCharacter(x, y, ?character:String = 'bf')
 	{
-		curCharacter = character;
-
-		switch (curCharacter)
+		for(char in members)
 		{
-			default:
-				json = Paths.parseJson('characters/$curCharacter/config', true);
-
-				if(json.packer_atlas)
-					frames = Paths.getPackerAtlas('characters/$curCharacter/assets', null, true);
-				else
-					frames = Paths.getSparrowAtlas('characters/$curCharacter/assets', null, true);
-				
-				for(anim in json.animations)
-				{
-					animation.addByPrefix(anim.anim, anim.name, anim.fps);
-					addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
-				}
-
-				danceLeftRight = animation.getByName('danceLeft') != null && animation.getByName('danceRight') != null;
-
-				if(Options.getData('anti-aliasing') == true)
-					antialiasing = !json.no_antialiasing;
-				else
-					antialiasing = false;
-
-				x += json.position[0];
-				y += json.position[1];
-
-				healthColor = json.healthbar_colors;
-				singDuration = json.sing_duration;
-
-				cameraPosition = json.camera_position;
-
-				scale.set(json.scale, json.scale);
-				updateHitbox();
-
-				//dance();
-
-			case 'your-hardcoded-character': // THIS IS HERE IF YOU WANNA HARDCODE FOR SOME REASON LOL
-				frames = Paths.getSparrowAtlas('characters/$curCharacter/assets', null, true);
-				animation.addByPrefix('idle', 'Dad idle dance', 24);
-				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
-				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
-				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
-				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
-
-				addOffset('idle');
-				addOffset("singUP", -6, 50);
-				addOffset("singRIGHT", 0, 27);
-				addOffset("singLEFT", -10, 10);
-				addOffset("singDOWN", 0, -30);
-
-				//playAnim('idle');
+			remove(char);
+			char.kill();
+			char.destroy();
 		}
 
-		dance();
+		clear();
 
-		if (isPlayer)
+		if(character != "")
 		{
-			flipX = !flipX;
+			json = Paths.parseJson('characters/$character/config');
 
-			// Doesn't flip for BF, since his are already in the right place???
-			if (!curCharacter.startsWith('bf'))
+			var characters:Array<String> = []; 
+            if(json.characters != null)
+                characters = json.characters;
+            else
+                characters = [character];
+
+			healthIcon = json.healthicon;
+			healthColor = json.healthbar_colors;
+
+			for(char in characters)
 			{
-				// var animArray
-				var oldRight = animation.getByName('singRIGHT').frames;
-				animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-				animation.getByName('singLEFT').frames = oldRight;
-
-				// IF THEY HAVE MISS ANIMATIONS??
-				if (animation.getByName('singRIGHTmiss') != null)
-				{
-					var oldMiss = animation.getByName('singRIGHTmiss').frames;
-					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-					animation.getByName('singLEFTmiss').frames = oldMiss;
-				}
+				var swagChar:CharacterPart = new CharacterPart(x, y, char, isPlayer);
+				add(swagChar);
 			}
+
+			cameraPosition = json.camera_position;
 		}
 	}
 
-	override function update(elapsed:Float)
+	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0)
 	{
-		if (!curCharacter.startsWith('bf'))
+		for(char in members)
 		{
-			if (animation.curAnim.name.startsWith('sing'))
-				holdTimer += elapsed;
-
-			if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
-			{
-				dance();
-				holdTimer = 0;
-			}
+			char.playAnim(AnimName, Force, Reversed, Frame);
 		}
-
-		switch (curCharacter)
-		{
-			case 'gf':
-				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
-					playAnim('danceRight');
-		}
-
-		super.update(elapsed);
 	}
 
-	private var danced:Bool = false;
-
-	/**
-	 * FOR GF/SPOOKY DANCING SHIT
-	 */
 	public function dance()
 	{
-		if (!debugMode)
+		for(char in members)
 		{
-			if(danceLeftRight)
-				if (!animation.curAnim.name.startsWith('hair'))
-				{
-					danced = !danced;
-
-					if (danced)
-						playAnim('danceRight');
-					else
-						playAnim('danceLeft');
-				}
-			else
-				playAnim('idle');
+			char.dance();
 		}
-	}
-
-	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
-	{
-		animation.play(AnimName, Force, Reversed, Frame);
-
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
-		{
-			offset.set(daOffset[0], daOffset[1]);
-		}
-		else
-			offset.set(0, 0);
-
-		if (curCharacter == 'gf')
-		{
-			if (AnimName == 'singLEFT')
-			{
-				danced = true;
-			}
-			else if (AnimName == 'singRIGHT')
-			{
-				danced = false;
-			}
-
-			if (AnimName == 'singUP' || AnimName == 'singDOWN')
-			{
-				danced = !danced;
-			}
-		}
-	}
-
-	public function addOffset(name:String, x:Float = 0, y:Float = 0)
-	{
-		animOffsets[name] = [x, y];
 	}
 }

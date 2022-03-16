@@ -11,33 +11,31 @@ class Boyfriend extends Character
 {
 	public var stunned:Bool = false;
 
-	public function new(x:Float, y:Float, ?char:String = 'bf')
-	{
-		super(x, y, char, true);
-	}
-
 	override function update(elapsed:Float)
 	{
-		if (!debugMode)
+		super.update(elapsed);
+
+		for(char in members)
 		{
-			if (animation.curAnim.name.startsWith('sing'))
+			if (!char.debugMode)
 			{
-				holdTimer += elapsed;
-			}
-			else
-				holdTimer = 0;
+				if (char.animation.curAnim.name.startsWith('sing'))
+				{
+					char.holdTimer += elapsed;
+				}
+				else
+					char.holdTimer = 0;
 
-			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
-			{
-				playAnim('idle', true, false, 10);
-			}
+				if (char.animation.curAnim.name.endsWith('miss') && char.animation.curAnim.finished && !char.debugMode)
+				{
+					char.playAnim('idle', true, false, 10);
+				}
 
-			if (animation.curAnim.name == 'firstDeath' && animation.curAnim.finished)
-			{
-				playAnim('deathLoop');
+				if (char.animation.curAnim.name == 'firstDeath' && char.animation.curAnim.finished)
+				{
+					char.playAnim('deathLoop');
+				}
 			}
 		}
-
-		super.update(elapsed);
 	}
 }

@@ -42,8 +42,11 @@ class GameOverSubstate extends MusicBeatSubstate
 		bf = new Boyfriend(x, y, daBf);
 		add(bf);
 
-		camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
+		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
+
+		if(bf.members[0] != null)
+			camFollow.setPosition(bf.members[0].getGraphicMidpoint().x, bf.members[0].getGraphicMidpoint().y);
 
 		FlxG.sound.play(Paths.sound('fnf_loss_sfx' + stageSuffix));
 		Conductor.changeBPM(100);
@@ -75,14 +78,17 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxG.switchState(new states.FreeplayState());
 		}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
+		for(char in bf.members)
 		{
-			FlxG.camera.follow(camFollow, LOCKON, 0.01);
-		}
+			if (char.animation.curAnim.name == 'firstDeath' && char.animation.curAnim.curFrame == 12)
+			{
+				FlxG.camera.follow(camFollow, LOCKON, 0.01);
+			}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished)
-		{
-			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+			if (char.animation.curAnim.name == 'firstDeath' && char.animation.curAnim.finished)
+			{
+				FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+			}
 		}
 
 		if (FlxG.sound.music.playing)

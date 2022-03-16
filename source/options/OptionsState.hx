@@ -61,7 +61,7 @@ class OptionsState extends MusicBeatState
 		if(controls.UI_DOWN_P)
 			changeSelection(1);
 
-		if(controls.ACCEPT)
+		if(controls.UI_LEFT_P)
 		{
 			persistentUpdate = false;
 			openSubState(new controls.ControlsSubState());
