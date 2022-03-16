@@ -773,7 +773,7 @@ class PlayState extends MusicBeatState
 		add(scoreTxt);
 
 		ratingTxt = new FlxText(10, 10, 0, "", 16);
-		ratingTxt.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
+		ratingTxt.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		ratingTxt.borderSize = 2;
 		ratingTxt.scrollFactor.set();
 		add(ratingTxt);
@@ -796,6 +796,7 @@ class PlayState extends MusicBeatState
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
+		ratingTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
 
 		// if (SONG.song == 'South')
