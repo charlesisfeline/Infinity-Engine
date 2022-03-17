@@ -1,5 +1,6 @@
 package options;
 
+import ui.AttachedAlphabet;
 import flixel.FlxG;
 import ui.Checkbox;
 import options.OptionsHandler;
@@ -14,6 +15,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
     public var curSelected:Int = 0;
     public var grpOptions:FlxTypedGroup<Alphabet>;
+
+    public var grpValues:FlxTypedGroup<AttachedAlphabet>;
+    public var valueNumber:Array<Int> = [];
 
     public var options:Array<Option> = [];
 
@@ -36,6 +40,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
 
+		grpValues = new FlxTypedGroup<AttachedAlphabet>();
+		add(grpValues);
+
 		checkboxGroup = new FlxTypedGroup<Checkbox>();
 		add(checkboxGroup);
     }
@@ -56,6 +63,51 @@ class BaseOptionsMenu extends MusicBeatSubstate
         if(controls.BACK)
             close();
 
+        if(controls.UI_LEFT_P || controls.UI_RIGHT_P)
+        {
+            var mult:Float = controls.UI_LEFT_P ? (0 - options[curSelected].multiplier) : (options[curSelected].multiplier);
+            switch(options[curSelected].type)
+            {
+                case 'float' | 'int':
+                    if(options[curSelected].type == 'int')
+                        mult = Math.floor(mult);
+
+                    Options.setData(options[curSelected].variable, Options.getData(options[curSelected].variable) + mult);
+
+                    if(Options.getData(options[curSelected].variable) < options[curSelected].values[0])
+                        Options.setData(options[curSelected].variable, options[curSelected].values[0]);
+
+                    if(Options.getData(options[curSelected].variable) > options[curSelected].values[1])
+                        Options.setData(options[curSelected].variable, options[curSelected].values[1]);
+
+                    reloadValues();
+                case 'string':
+                    var swagSkinNum:Int = 0;
+
+                    for(skinNum in 0...UISkinList.skins.length)
+                    {
+                        if(options[curSelected].values[skinNum] == Options.getData(options[curSelected].variable))
+                        {
+                            swagSkinNum = skinNum;
+                            break;
+                        }
+                    }
+
+                    var str_mult = controls.UI_LEFT_P ? -1 : 1;
+
+                    swagSkinNum += str_mult;
+
+                    if(swagSkinNum < 0)
+                        swagSkinNum = options[curSelected].values.length - 1;
+
+                    if(swagSkinNum > options[curSelected].values.length - 1)
+                        swagSkinNum = 0;
+
+                    Options.setData(options[curSelected].variable, options[curSelected].values[swagSkinNum]);
+                    reloadValues();
+            }
+        }
+
         if(controls.UI_UP_P)
             changeSelection(-1);
 
@@ -66,12 +118,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
         {
             switch(options[curSelected].type)
             {
-                case 'menu':
-                    switch(options[curSelected].title)
-                    {
-                        case 'UI Skin':
-                            openSubState(new controls.ControlsSubState());
-                    }
                 case 'bool':
                     Options.setData(options[curSelected].variable, !Options.getData(options[curSelected].variable));
                     reloadCheckboxes();
@@ -85,6 +131,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
         {
             checkboxGroup.members[i].checked = Options.getData(options[checkboxNumber[i]].variable);
             checkboxGroup.members[i].refresh();
+        }
+    }
+
+	public function reloadValues()
+    {
+        for(i in 0...grpValues.members.length)
+        {
+            grpValues.members[i].changeText(Options.getData(options[valueNumber[i]].variable));
         }
     }
 
@@ -105,14 +159,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
             swagOption.ID = i;
 
             var usesCheckbox:Bool = false;
-            var isMenu:Bool = false;
+            var isNumber:Bool = false;
+            var isString:Bool = false;
             
             switch(options[i].type)
             {
                 case "bool":
                     usesCheckbox = true;
-                case "menu":
-                    isMenu = true;
+                case "float" | "int":
+                    isNumber = true;
+                case "string":
+                    isString = true;
             }
 
             swagOption.x += 300;
@@ -137,6 +194,15 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
             grpOptions.add(swagOption);
 
+            if(isNumber || isString)
+            {
+                var swagValue:AttachedAlphabet = new AttachedAlphabet(Options.getData(options[i].variable), 400, 0);
+                swagValue.sprTracker = swagOption;
+                valueNumber.push(i);
+                swagValue.ID = i;
+                grpValues.add(swagValue);
+            }
+
             curSelected = 0;
             changeSelection();
         }
@@ -158,9 +224,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
             option.alpha = 0.6;
         });
 
-        var bullShit:Int = 0;
+        grpValues.forEachAlive(function(option:Alphabet) {
+            option.alpha = 0.6;
+
+            if(option.ID == curSelected)
+                option.alpha = 1;
+        });
 
         grpOptions.members[curSelected].alpha = 1;
+        //grpValues.members[valueNumber[curSelected]].alpha = 1;
+
+        var bullShit:Int = 0;
         
 		for (item in grpOptions.members)
 		{

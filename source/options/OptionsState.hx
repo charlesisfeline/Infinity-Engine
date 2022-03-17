@@ -25,6 +25,8 @@ class OptionsState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+
+		UISkinList.init();
 		
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		menuBG.color = 0xFFea71fd;

@@ -1,5 +1,6 @@
 package states;
 
+import options.UISkinList;
 import options.OptionsHandler;
 import game.Highscore;
 import util.CoolUtil;
@@ -229,6 +230,8 @@ class PlayState extends MusicBeatState
 	{
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
+
+		UISkinList.init();
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();

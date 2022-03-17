@@ -28,7 +28,8 @@ class GraphicsSubstate extends BaseOptionsMenu
             "Adjust how high or low your FPS can go and see how it feels!",
             "fps-cap",
             "int",
-            [10, 1000]
+            [10, 1000],
+            1
         );
         addOption(option);
 
@@ -51,10 +52,9 @@ class GraphicsSubstate extends BaseOptionsMenu
         var option:Option = new Option(
             "UI Skin",
             "Change the skin of your notes and ratings.",
-            "", // when using the "menu" type, a value isn't needed, since it takes you to a menu.
-            "menu",
-            [] // nothing needs to be here either
-            // go to BaseOptionsMenu.hx - Line 69 (funni) to make the option go to the menu when pressing ACCEPT.
+            "ui-skin", // when using the "menu" type, a value isn't needed, since it takes you to a menu.
+            "string",
+            UISkinList.skins
         );
         addOption(option);
 

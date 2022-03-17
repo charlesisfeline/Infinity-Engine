@@ -1,5 +1,6 @@
 package states;
 
+import options.UISkinList;
 import game.Conductor;
 import game.PlayerSettings;
 import engine.EngineSettings;
@@ -70,25 +71,20 @@ class TitleState extends MusicBeatState
 	{
 		super.create();
 
-		rembr();
 		FlxG.fixedTimestep = false;
 
 		#if CHECK_FOR_UPDATES
 		if(!initialized)
 		{
 			trace('checking for update');
-			rembr();
 			var http = new haxe.Http("https://raw.githubusercontent.com/CubeSword/Infinity-Engine/main/gitVersion.txt");
-			rembr();
 			
 			http.onData = function (data:String)
 			{
-				updateVersion = data.split('\n')[0].trim();
-				rembr();
 				var curVersion:String = EngineSettings.version.trim();
-				rembr();
+
+				updateVersion = data.split('\n')[0].trim();
 				trace('version online: ' + updateVersion + ', your version: ' + curVersion + '!');
-				trace("??????????????????????????????????????????????//");
 				if(updateVersion != curVersion) {
 					trace('versions arent matching!');
 					mustUpdate = true;
@@ -109,18 +105,12 @@ class TitleState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		rembr();
-
 		PlayerSettings.init();
-		trace("PLAYER SETTINGS INIT");
+		Options.init();
+		Mods.init();
+		UISkinList.init();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
-		trace("INTRO TEXT INIT");
-
-		Options.init();
-		trace("OPTIONS INIT");
-		Mods.init();
-		trace("MODS INIT");
 
 		Highscore.load();
 
