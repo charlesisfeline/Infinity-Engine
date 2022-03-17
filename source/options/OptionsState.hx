@@ -1,5 +1,6 @@
 package options;
 
+import options.OptionsHandler;
 import ui.Alphabet;
 import states.MusicBeatState;
 import flixel.FlxG;
@@ -61,10 +62,13 @@ class OptionsState extends MusicBeatState
 		if(controls.UI_DOWN_P)
 			changeSelection(1);
 
-		if(controls.UI_LEFT_P)
+		if(controls.ACCEPT)
 		{
-			persistentUpdate = false;
-			openSubState(new controls.ControlsSubState());
+			switch(options[curSelected])
+			{
+				case "Graphics":
+					openSubState(new GraphicsSubstate());
+			}
 		}
 	}
 

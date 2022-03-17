@@ -4,7 +4,7 @@ import states.PlayState;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
-import options.Options;
+import options.OptionsHandler;
 import flixel.util.FlxColor;
 
 using StringTools;
@@ -149,7 +149,7 @@ class Note extends FlxSprite
 			if (PlayState.curUISkin.endsWith('-pixel'))
 				x += 30;
 			else
-				x + 35;
+				x += 35;
 
 			if (prevNote.isSustainNote)
 			{
@@ -165,7 +165,7 @@ class Note extends FlxSprite
 						prevNote.playAnim('redhold');
 				}
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.52 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}

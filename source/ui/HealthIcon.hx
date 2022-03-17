@@ -1,7 +1,7 @@
 package ui;
 
 import flixel.FlxSprite;
-import options.Options;
+import options.OptionsHandler;
 
 using StringTools;
 

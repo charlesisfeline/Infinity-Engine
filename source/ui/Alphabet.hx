@@ -1,6 +1,6 @@
 package ui;
 
-import options.Options;
+import options.OptionsHandler;
 import util.CoolUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;

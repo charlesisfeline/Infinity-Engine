@@ -1,6 +1,6 @@
 package states;
 
-import options.Options;
+import options.OptionsHandler;
 import game.Highscore;
 import util.CoolUtil;
 import game.Song;
@@ -1449,7 +1449,7 @@ class PlayState extends MusicBeatState
 
 		#if debug
 		if (FlxG.keys.justPressed.EIGHT)
-			FlxG.switchState(new AnimationDebug(SONG.player2));
+			//FlxG.switchState(new AnimationDebug(SONG.player2));
 		#end
 
 		if (startingSong)

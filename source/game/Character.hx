@@ -1,7 +1,7 @@
 package game;
 
 import game.CharacterPart;
-import options.Options;
+import options.OptionsHandler;
 import states.PlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;

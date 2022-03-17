@@ -31,7 +31,7 @@ import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
 import flixel.input.keyboard.FlxKey;
-import options.Options;
+import options.OptionsHandler;
 import game.Highscore;
 import mods.Mods;
 

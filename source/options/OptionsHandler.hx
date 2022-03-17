@@ -69,6 +69,21 @@ class Options
 			false // the value to set to
 		],
 		[
+			"note-splashes", // the option's save data name
+			"bool", // the type
+			true // the value to set to
+		],
+		[
+			"camera-zooms", // the option's save data name
+			"bool", // the type
+			true // the value to set to
+		],
+		[
+			"fps-cap", // the option's save data name
+			"int", // the type
+			60 // the value to set to
+		],
+		[
 			"note-offset", // the option's save data name
 			"float", // the type
 			0 // the value to set to

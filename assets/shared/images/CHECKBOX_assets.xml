@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="CHECKBOX_assets.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="check0000" x="2" y="2" width="609" height="585"/>
+	<SubTexture name="check0001" x="2" y="2" width="609" height="585"/>
+	<SubTexture name="check0002" x="613" y="2" width="609" height="585"/>
+	<SubTexture name="check0003" x="613" y="2" width="609" height="585"/>
+	<SubTexture name="check0004" x="1224" y="2" width="609" height="585"/>
+	<SubTexture name="check0005" x="1224" y="2" width="609" height="585"/>
+	<SubTexture name="check0006" x="2" y="589" width="609" height="585"/>
+	<SubTexture name="check0007" x="2" y="1176" width="609" height="585"/>
+	<SubTexture name="check0008" x="613" y="589" width="609" height="585"/>
+	<SubTexture name="check0009" x="613" y="589" width="609" height="585"/>
+	<SubTexture name="check0010" x="1224" y="589" width="609" height="585"/>
+	<SubTexture name="check0011" x="1224" y="589" width="609" height="585"/>
+	<SubTexture name="check0012" x="613" y="1176" width="609" height="585"/>
+	<SubTexture name="check0013" x="613" y="1176" width="609" height="585"/>
+	<SubTexture name="check0014" x="1224" y="1176" width="609" height="585"/>
+	<SubTexture name="check0015" x="1224" y="1176" width="609" height="585"/>
+	<SubTexture name="check0016" x="613" y="1176" width="609" height="585"/>
+	<SubTexture name="checked0000" x="2" y="1763" width="222" height="243"/>
+	<SubTexture name="checked0001" x="2" y="1763" width="222" height="243"/>
+	<SubTexture name="uncheck0000" x="226" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0001" x="226" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0002" x="450" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0003" x="450" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0004" x="674" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0005" x="674" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0006" x="898" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0007" x="898" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0008" x="1122" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0009" x="1122" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0010" x="1346" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0011" x="1346" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0012" x="1570" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0013" x="1570" y="1763" width="222" height="242"/>
+	<SubTexture name="uncheck0014" x="1794" y="1763" width="222" height="242"/>
+	<SubTexture name="unchecked0000" x="1835" y="2" width="201" height="203"/>
+	<SubTexture name="unchecked0001" x="1835" y="2" width="201" height="203"/>
+	<SubTexture name="unchecked0002" x="1835" y="207" width="201" height="203"/>
+	<SubTexture name="unchecked0003" x="1835" y="207" width="201" height="203"/>
+	<SubTexture name="unchecked0004" x="1835" y="412" width="201" height="203"/>
+	<SubTexture name="unchecked0005" x="1835" y="412" width="201" height="203"/>
+</TextureAtlas>

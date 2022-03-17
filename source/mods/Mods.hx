@@ -1,6 +1,6 @@
 package mods;
 
-import options.Options;
+import options.OptionsHandler;
 using StringTools;
 
 class Mods

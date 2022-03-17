@@ -3,7 +3,7 @@ package game;
 import states.PlayState;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import options.Options;
+import options.OptionsHandler;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 
@@ -25,8 +25,6 @@ class StrumNote extends FlxSprite
 
 	public function loadNoteSkin(?noteskin:String = "default")
 	{
-		trace("CURRENT NOTE DATA:" + noteData);
-
 		if(noteskin.endsWith("-pixel"))
 		{
 			loadGraphic(Paths.image('ui-skins/$noteskin/notes'), true, 17, 17);

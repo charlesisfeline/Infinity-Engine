@@ -1,6 +1,6 @@
 package states;
 
-import options.Options;
+import options.OptionsHandler;
 import engine.EngineSettings;
 #if desktop
 import util.Discord.DiscordClient;
@@ -114,6 +114,11 @@ class MainMenuState extends MusicBeatState
 	{
 		if (FlxG.sound.music.volume < 0.8)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+
+		#if debug
+		if (FlxG.keys.justPressed.EIGHT)
+			FlxG.switchState(new OffsetMaker());
+		#end
 
 		if (!selectedSomethin)
 		{

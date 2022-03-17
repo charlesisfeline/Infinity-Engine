@@ -10,7 +10,7 @@ import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import options.Options;
+import options.OptionsHandler;
 import controls.Controls;
 import flixel.util.FlxColor;
 
@@ -32,6 +32,8 @@ class ControlsSubState extends MusicBeatSubstate
 	var binds:Array<Array<String>> = [];
 
 	var changingBinds:Bool = false;
+
+	var enterTimer:Float = 1;
 
 	override public function create()
 	{
@@ -104,6 +106,11 @@ class ControlsSubState extends MusicBeatSubstate
 		super.update(elapsed);
 		menuBG.antialiasing = Options.getData('anti-aliasing');
 
+		enterTimer -= elapsed;
+
+		if(enterTimer < 0)
+			enterTimer = 0;
+
 		if(controls.BACK && !exiting)
 		{
 			exiting = true;
@@ -127,31 +134,32 @@ class ControlsSubState extends MusicBeatSubstate
 			});
 		}
 
-		// THIS CRASHES THE GAME!!! FIX TOMORROW!!!
-		// ALSO REMEMBER TO FIX RATINGS AND COMBOS NOT SHOWING UP CORRECTLY!!!
-
-		if(!changingBinds)
+		
+		if(enterTimer <= 0)
 		{
-			if(controls.UI_LEFT_P)
-				changeSelection(-1);
-	
-			if(controls.UI_RIGHT_P)
-				changeSelection(1);
+			if(!changingBinds)
+			{
+				if(controls.UI_LEFT_P)
+					changeSelection(-1);
+		
+				if(controls.UI_RIGHT_P)
+					changeSelection(1);
 
-			if(controls.ACCEPT) {
-				checkingForKeys = false;
-				changingBinds = true;
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-			}
-		} else {
-			if(!controls.ACCEPT_P)
-				checkingForKeys = true;
-			
-			if(FlxG.keys.getIsDown().length > 0 && checkingForKeys) {
-				binds[keyCount - 1][curSelected] = FlxG.keys.getIsDown()[0].ID.toString();
+				if(controls.ACCEPT) {
+					checkingForKeys = false;
+					changingBinds = true;
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+				}
+			} else {
+				if(!controls.ACCEPT_P)
+					checkingForKeys = true;
+				
+				if(FlxG.keys.getIsDown().length > 0 && checkingForKeys) {
+					binds[keyCount - 1][curSelected] = FlxG.keys.getIsDown()[0].ID.toString();
 
-				changingBinds = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+					changingBinds = false;
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
 			}
 		}
 
