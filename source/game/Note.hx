@@ -26,6 +26,7 @@ class Note extends FlxSprite
 	public var shouldHit:Bool = true;
 
 	public var noteScore:Float = 1;
+	public var originalHeightForCalcs:Float = 6;
 
 	public static var swagWidth:Float = 160 * 0.7;
 	public static var PURP_NOTE:Int = 0;
@@ -43,7 +44,7 @@ class Note extends FlxSprite
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
-		x += 85;
+		x += 100;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
@@ -67,6 +68,7 @@ class Note extends FlxSprite
 			if (isSustainNote)
 			{
 				loadGraphic(Paths.image('ui-skins/$noteskin/noteEnds'), true, 7, 6);
+				originalHeightForCalcs = height;
 
 				animation.add('purpleholdend', [4]);
 				animation.add('greenholdend', [6]);
@@ -85,20 +87,20 @@ class Note extends FlxSprite
 		} else {
 			frames = Paths.getSparrowAtlas('ui-skins/$noteskin/notes');
 
-			animation.addByPrefix('greenScroll', 'up0');
-			animation.addByPrefix('redScroll', 'right0');
-			animation.addByPrefix('blueScroll', 'down0');
-			animation.addByPrefix('purpleScroll', 'left0');
+			animation.addByPrefix('purpleScroll', 'A0');
+			animation.addByPrefix('blueScroll', 'B0');
+			animation.addByPrefix('greenScroll', 'C0');
+			animation.addByPrefix('redScroll', 'D0');
 
-			animation.addByPrefix('purpleholdend', 'left hold end0');
-			animation.addByPrefix('greenholdend', 'up hold end0');
-			animation.addByPrefix('redholdend', 'right hold end0');
-			animation.addByPrefix('blueholdend', 'down hold end0');
+			animation.addByPrefix('purpleholdend', 'A tail0');
+			animation.addByPrefix('blueholdend', 'B tail0');
+			animation.addByPrefix('greenholdend', 'C tail0');
+			animation.addByPrefix('redholdend', 'D tail0');
 
-			animation.addByPrefix('purplehold', 'left hold0');
-			animation.addByPrefix('greenhold', 'up hold0');
-			animation.addByPrefix('redhold', 'right hold0');
-			animation.addByPrefix('bluehold', 'down hold0');
+			animation.addByPrefix('purplehold', 'A hold0');
+			animation.addByPrefix('bluehold', 'B hold0');
+			animation.addByPrefix('greenhold', 'C hold0');
+			animation.addByPrefix('redhold', 'D hold0');
 
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
@@ -130,6 +132,9 @@ class Note extends FlxSprite
 
 			x += width / 2;
 
+			if(Options.getData('downscroll'))
+				flipY = true;
+
 			switch (noteData)
 			{
 				case 2:
@@ -148,8 +153,8 @@ class Note extends FlxSprite
 
 			if (PlayState.curUISkin.endsWith('-pixel'))
 				x += 30;
-			else
-				x += 35;
+			/*else
+				x += 35;*/
 
 			if (prevNote.isSustainNote)
 			{
@@ -176,6 +181,17 @@ class Note extends FlxSprite
 	{
 		super.update(elapsed);
 
+		calculateCanBeHit();
+
+		if(tooLate)
+		{
+			if (alpha > 0.3)
+				alpha = 0.3;
+		}
+	}
+
+	public function calculateCanBeHit()
+	{
 		if(this != null)
 		{
 			if(mustPress)
@@ -201,9 +217,6 @@ class Note extends FlxSprite
 				}
 				else
 				{
-					/*
-					TODO: make this shit use something from the arrow config .txt file
-					*/ 
 					if(shouldHit)
 					{
 						if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset

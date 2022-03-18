@@ -15,8 +15,11 @@ class UISkinList
             "default",
             "default-pixel",
             "circles",
+            "circles-pixel",
             "diamond",
+            "diamond-pixel",
             "square",
+            "square-pixel",
         ];
 
         #if (MODS_ALLOWED && sys)

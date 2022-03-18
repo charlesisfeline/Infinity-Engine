@@ -25,10 +25,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		var daBf:String = '';
 		switch (daStage)
 		{
-			case 'school':
-				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
-			case 'schoolEvil':
+			case 'school' | 'schoolEvil':
 				stageSuffix = '-pixel';
 				daBf = 'bf-pixel-dead';
 			default:
@@ -39,7 +36,7 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		Conductor.songPosition = 0;
 
-		bf = new Boyfriend(x, y, daBf);
+		bf = new Boyfriend(x, y, daBf, true);
 		add(bf);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -71,6 +68,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (controls.BACK)
 		{
 			FlxG.sound.music.stop();
+			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 			if (PlayState.isStoryMode)
 				FlxG.switchState(new states.StoryMenuState());
@@ -87,7 +85,8 @@ class GameOverSubstate extends MusicBeatSubstate
 
 			if (char.animation.curAnim.name == 'firstDeath' && char.animation.curAnim.finished)
 			{
-				FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+				FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix, 'shared'));
+				char.playAnim('deathLoop');
 			}
 		}
 

@@ -124,11 +124,13 @@ class ChartingState extends MusicBeatState
 				needsVoices: true,
 				player1: 'bf',
 				player2: 'dad',
+				player3: 'gf',
 				speed: 1,
 				validScore: false,
 				ui_Skin: "default",
 				keyCount: 4,
-				stage: 'stage'
+				stage: 'stage',
+				gf: 'gf'
 			};
 		}
 

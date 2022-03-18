@@ -115,6 +115,8 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.sound.music.volume < 0.8)
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 
+		FlxG.camera.followLerp = 0.06 * (60 / Main.display.currentFPS);
+
 		#if debug
 		if (FlxG.keys.justPressed.EIGHT)
 			FlxG.switchState(new OffsetMaker());

@@ -57,21 +57,21 @@ class StrumNote extends FlxSprite
             switch(Math.abs(noteData))
             {
                 case 0:
-			        animation.addByPrefix('static', 'left static', 24, true);
-                    animation.addByPrefix('pressed', 'left press', 24, false);
-                    animation.addByPrefix('confirm', 'left confirm', 24, false);
+			        animation.addByPrefix('static', 'arrowLEFT0', 24, true);
+                    animation.addByPrefix('pressed', 'A press', 24, false);
+                    animation.addByPrefix('confirm', 'A confirm', 24, false);
                 case 1:
-			        animation.addByPrefix('static', 'down static', 24, true);
-                    animation.addByPrefix('pressed', 'down press', 24, false);
-                    animation.addByPrefix('confirm', 'down confirm', 24, false);
+			        animation.addByPrefix('static', 'arrowDOWN0', 24, true);
+                    animation.addByPrefix('pressed', 'B press', 24, false);
+                    animation.addByPrefix('confirm', 'B confirm', 24, false);
                 case 2:
-			        animation.addByPrefix('static', 'up static', 24, true);
-                    animation.addByPrefix('pressed', 'up press', 24, false);
-                    animation.addByPrefix('confirm', 'up confirm', 24, false);
+			        animation.addByPrefix('static', 'arrowUP0', 24, true);
+                    animation.addByPrefix('pressed', 'C press', 24, false);
+                    animation.addByPrefix('confirm', 'C confirm', 24, false);
                 case 3:
-			        animation.addByPrefix('static', 'right static', 24, true);
-                    animation.addByPrefix('pressed', 'right press', 24, false);
-                    animation.addByPrefix('confirm', 'right confirm', 24, false);
+			        animation.addByPrefix('static', 'arrowRIGHT0', 24, true);
+                    animation.addByPrefix('pressed', 'D press', 24, false);
+                    animation.addByPrefix('confirm', 'D confirm', 24, false);
             }
 
 			setGraphicSize(Std.int(width * 0.7));

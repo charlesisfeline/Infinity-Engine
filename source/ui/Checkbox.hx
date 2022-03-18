@@ -58,6 +58,8 @@ class Checkbox extends FlxSprite
     {
         if(!refreshed)
         {
+            oldChecked = checked;
+            
             if(checked)
                 playAnim('checked', true);
             else

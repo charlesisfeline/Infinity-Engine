@@ -102,7 +102,28 @@ class Paths
 
 	static public function json(key:String, ?library:String)
 	{
+		#if (MODS_ALLOWED && sys)
+		for(mod in Mods.activeMods)
+		{
+			if(Mods.activeMods.length > 0)
+			{
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
+					return Sys.getCwd() + 'mods/$mod/$key.json';
+			}
+		}
+		#end
+
 		return getPath('$key.json', TEXT, library);
+	}
+
+	static public function getText(key:String)
+	{
+		#if (MODS_ALLOWED && sys)
+		if(sys.FileSystem.exists(Sys.getCwd() + '$key'))
+			return sys.io.File.getContent(Sys.getCwd() + '$key');
+		#end
+
+		return Assets.getText('$key');
 	}
 
 	static public function sound(key:String, ?library:String, ?customPath:Bool = false):Dynamic

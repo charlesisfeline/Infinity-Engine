@@ -1,5 +1,6 @@
 package states;
 
+import util.CoolUtil;
 import options.UISkinList;
 import game.Conductor;
 import game.PlayerSettings;
@@ -109,6 +110,8 @@ class TitleState extends MusicBeatState
 		Options.init();
 		Mods.init();
 		UISkinList.init();
+
+		CoolUtil.updateFramerate();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 

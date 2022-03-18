@@ -79,6 +79,11 @@ class Options
 			true // the value to set to
 		],
 		[
+			"anti-mash", // the option's save data name
+			"bool", // the type
+			true // the value to set to
+		],
+		[
 			"fps-cap", // the option's save data name
 			"int", // the type
 			60 // the value to set to

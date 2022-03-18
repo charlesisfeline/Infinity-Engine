@@ -1,5 +1,6 @@
 package options;
 
+import util.CoolUtil;
 import ui.AttachedAlphabet;
 import flixel.FlxG;
 import ui.Checkbox;
@@ -12,6 +13,8 @@ import substates.MusicBeatSubstate;
 class BaseOptionsMenu extends MusicBeatSubstate
 {
     public var menuBG:FlxSprite;
+
+    public var enterTimer:Float = 0.2;
 
     public var curSelected:Int = 0;
     public var grpOptions:FlxTypedGroup<Alphabet>;
@@ -54,73 +57,91 @@ class BaseOptionsMenu extends MusicBeatSubstate
         refreshOptions(); // DON'T REMOVE
     }
 
+    var holdTime:Float = 0;
+
     override public function update(elapsed:Float)
     {
         super.update(elapsed);
 
+        enterTimer -= elapsed;
+
+        if(enterTimer < 0)
+            enterTimer = 0;
+
         menuBG.antialiasing = Options.getData('anti-aliasing');
 
-        if(controls.BACK)
-            close();
-
-        if(controls.UI_LEFT_P || controls.UI_RIGHT_P)
+        if(enterTimer <= 0)
         {
-            var mult:Float = controls.UI_LEFT_P ? (0 - options[curSelected].multiplier) : (options[curSelected].multiplier);
-            switch(options[curSelected].type)
+            if(controls.BACK)
+                close();
+
+            if(controls.UI_LEFT || controls.UI_RIGHT)
+                holdTime += elapsed;
+            else
+                holdTime = 0;
+
+            if(holdTime > 0.5 || (controls.UI_LEFT_P || controls.UI_RIGHT_P))
             {
-                case 'float' | 'int':
-                    if(options[curSelected].type == 'int')
-                        mult = Math.floor(mult);
+                var mult:Float = controls.UI_LEFT ? (0 - options[curSelected].multiplier) : (options[curSelected].multiplier);
+                switch(options[curSelected].type)
+                {
+                    case 'float' | 'int':
+                        if(options[curSelected].type == 'int')
+                            mult = Math.floor(mult);
 
-                    Options.setData(options[curSelected].variable, Options.getData(options[curSelected].variable) + mult);
+                        Options.setData(options[curSelected].variable, Options.getData(options[curSelected].variable) + mult);
 
-                    if(Options.getData(options[curSelected].variable) < options[curSelected].values[0])
-                        Options.setData(options[curSelected].variable, options[curSelected].values[0]);
+                        if(Options.getData(options[curSelected].variable) < options[curSelected].values[0])
+                            Options.setData(options[curSelected].variable, options[curSelected].values[0]);
 
-                    if(Options.getData(options[curSelected].variable) > options[curSelected].values[1])
-                        Options.setData(options[curSelected].variable, options[curSelected].values[1]);
+                        if(Options.getData(options[curSelected].variable) > options[curSelected].values[1])
+                            Options.setData(options[curSelected].variable, options[curSelected].values[1]);
 
-                    reloadValues();
-                case 'string':
-                    var swagSkinNum:Int = 0;
+                        reloadValues();
 
-                    for(skinNum in 0...UISkinList.skins.length)
-                    {
-                        if(options[curSelected].values[skinNum] == Options.getData(options[curSelected].variable))
+                        if(options[curSelected].variable == 'fps-cap')
+                            CoolUtil.updateFramerate();
+                    case 'string':
+                        var swagSkinNum:Int = 0;
+
+                        for(skinNum in 0...UISkinList.skins.length)
                         {
-                            swagSkinNum = skinNum;
-                            break;
+                            if(options[curSelected].values[skinNum] == Options.getData(options[curSelected].variable))
+                            {
+                                swagSkinNum = skinNum;
+                                break;
+                            }
                         }
-                    }
 
-                    var str_mult = controls.UI_LEFT_P ? -1 : 1;
+                        var str_mult = controls.UI_LEFT_P ? -1 : 1;
 
-                    swagSkinNum += str_mult;
+                        swagSkinNum += str_mult;
 
-                    if(swagSkinNum < 0)
-                        swagSkinNum = options[curSelected].values.length - 1;
+                        if(swagSkinNum < 0)
+                            swagSkinNum = options[curSelected].values.length - 1;
 
-                    if(swagSkinNum > options[curSelected].values.length - 1)
-                        swagSkinNum = 0;
+                        if(swagSkinNum > options[curSelected].values.length - 1)
+                            swagSkinNum = 0;
 
-                    Options.setData(options[curSelected].variable, options[curSelected].values[swagSkinNum]);
-                    reloadValues();
+                        Options.setData(options[curSelected].variable, options[curSelected].values[swagSkinNum]);
+                        reloadValues();
+                }
             }
-        }
 
-        if(controls.UI_UP_P)
-            changeSelection(-1);
+            if(controls.UI_UP_P)
+                changeSelection(-1);
 
-        if(controls.UI_DOWN_P)
-            changeSelection(1);
+            if(controls.UI_DOWN_P)
+                changeSelection(1);
 
-        if(controls.ACCEPT)
-        {
-            switch(options[curSelected].type)
+            if(controls.ACCEPT)
             {
-                case 'bool':
-                    Options.setData(options[curSelected].variable, !Options.getData(options[curSelected].variable));
-                    reloadCheckboxes();
+                switch(options[curSelected].type)
+                {
+                    case 'bool':
+                        Options.setData(options[curSelected].variable, !Options.getData(options[curSelected].variable));
+                        reloadCheckboxes();
+                }
             }
         }
     }

@@ -112,6 +112,7 @@ class CharacterPart extends FlxSprite
 
 				flipX = json.flip_x;
 
+				//setGraphicSize(Std.int(frameWidth * json.scale));
 				scale.set(json.scale, json.scale);
 				updateHitbox();
 

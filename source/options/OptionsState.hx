@@ -18,6 +18,7 @@ class OptionsState extends MusicBeatState
 	var options:Array<String> = [
 		"Graphics",
 		"Gameplay",
+		"Controls",
 		"Tools",
 		"Misc"
 	];
@@ -70,6 +71,8 @@ class OptionsState extends MusicBeatState
 			{
 				case "Graphics":
 					openSubState(new GraphicsSubstate());
+				case "Gameplay":
+					openSubState(new GameplaySubstate());
 			}
 		}
 	}
