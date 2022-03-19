@@ -331,27 +331,34 @@ class TitleState extends MusicBeatState
 			transitioning = true;
 			// FlxG.sound.music.stop();
 
-			new FlxTimer().start(2, function(tmr:FlxTimer)
+			if(Options.getData("update-warnings"))
 			{
-				// Check if version is outdated
-
-				var version:String = "v" + EngineSettings.version.trim();
-
-				if (version.trim() != updateVersion && !OutdatedState.leftState)
+				new FlxTimer().start(2, function(tmr:FlxTimer)
 				{
-					mustUpdate = false;
-					FlxG.switchState(new OutdatedState());
-					trace('OLD VERSION!');
-					trace('old ver');
-					trace(version.trim());
-					trace('cur ver');
-					trace(updateVersion);
-				}
-				else
-				{
-					FlxG.switchState(new MainMenuState());
-				}
-			});
+					// Check if version is outdated
+
+					var version:String = "v" + EngineSettings.version.trim();
+
+					if (version.trim() != updateVersion && !OutdatedState.leftState)
+					{
+						mustUpdate = false;
+						FlxG.switchState(new OutdatedState());
+						trace('OLD VERSION!');
+						trace('old ver');
+						trace(version.trim());
+						trace('cur ver');
+						trace(updateVersion);
+					}
+					else
+					{
+						FlxG.switchState(new MainMenuState());
+					}
+				});
+			}
+			else
+			{
+				FlxG.switchState(new MainMenuState());
+			}
 		}
 
 		if (pressedEnter && !skippedIntro)

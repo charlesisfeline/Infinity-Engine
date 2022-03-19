@@ -10,8 +10,9 @@ class Option
     public var type:String = "bool";
     public var multiplier:Float = 1;
     public var values:Array<Dynamic> = [];
+    public var decimals:Int = 1;
 
-    public function new(title:String, desc:String, variable:String, type:String, ?values:Array<Dynamic>, ?multiplier:Float = 1)
+    public function new(title:String, desc:String, variable:String, type:String, ?values:Array<Dynamic>, ?multiplier:Float = 1, ?decimals:Int = 1)
     {
         this.title = title;
         this.desc = desc;
@@ -23,5 +24,7 @@ class Option
             this.values = [];
         else
             this.values = values;
+
+        this.decimals = decimals;
     }
 }

@@ -1,5 +1,6 @@
 package states;
 
+import util.Cache;
 import game.Song;
 import game.Highscore;
 import flixel.tweens.FlxTween;
@@ -60,6 +61,8 @@ class FreeplayState extends MusicBeatState
 	override function create()
 	{
 		super.create();
+
+		Cache.clearCache();
 
 		#if desktop
 		// Updating Discord Rich Presence

@@ -17,8 +17,8 @@ class MusicBeatSubstate extends FlxSubState
 	private var lastBeat:Float = 0;
 	private var lastStep:Float = 0;
 
-	private var curStep:Int = 0;
-	private var curBeat:Int = 0;
+	public var curStep:Int = 0;
+	public var curBeat:Int = 0;
 	private var controls(get, never):Controls;
 
 	inline function get_controls():Controls

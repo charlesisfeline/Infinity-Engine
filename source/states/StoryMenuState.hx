@@ -1,5 +1,6 @@
 package states;
 
+import util.Cache;
 import game.Song;
 import game.Highscore;
 import ui.MenuCharacter;
@@ -79,6 +80,8 @@ class StoryMenuState extends MusicBeatState
 	{
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
+
+		Cache.clearCache();
 
 		if (FlxG.sound.music != null)
 		{

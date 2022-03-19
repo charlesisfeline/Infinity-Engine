@@ -73,6 +73,8 @@ class OptionsState extends MusicBeatState
 					openSubState(new GraphicsSubstate());
 				case "Gameplay":
 					openSubState(new GameplaySubstate());
+				case "Tools":
+					openSubState(new ToolsSubstate());
 			}
 		}
 	}

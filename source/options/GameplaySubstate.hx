@@ -40,6 +40,33 @@ class GameplaySubstate extends BaseOptionsMenu
         addOption(option);
 
         var option:Option = new Option(
+            "Update Warnings",
+            "Disabling this prevents the game from telling you when a new update is available.",
+            "update-warnings",
+            "bool"
+        );
+        addOption(option);
+
+        var option:Option = new Option(
+            "Botplay",
+            "Enabling this allows a bot to play the game for you. Scores won't be saved with this enabled.",
+            "botplay",
+            "bool"
+        );
+        addOption(option);
+
+        var option:Option = new Option(
+            "Scroll Speed",
+            "Adjust how fast your notes go.\n0 = Chart Scroll Speed",
+            "scroll-speed",
+            "float",
+            [0, 10],
+            0.1, // multiplier
+            1 // how many decimal numbers there are, 2 = 69.69% for example
+        );
+        addOption(option);
+
+        var option:Option = new Option(
             "Note Offset",
             "Adjust how early/late your notes spawn.\nNegative = Earlier | Positive = Later",
             "note-offset",

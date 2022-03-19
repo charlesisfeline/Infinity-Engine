@@ -1,5 +1,6 @@
 package options;
 
+import flixel.math.FlxMath;
 import util.CoolUtil;
 import ui.AttachedAlphabet;
 import flixel.FlxG;
@@ -138,6 +139,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
             {
                 switch(options[curSelected].type)
                 {
+                    case 'menu':
+                        switch(options[curSelected].title)
+                        {
+                            case 'Character Editor':
+                                FlxG.switchState(new states.CharacterEditor());
+                        }
                     case 'bool':
                         Options.setData(options[curSelected].variable, !Options.getData(options[curSelected].variable));
                         reloadCheckboxes();
@@ -159,7 +166,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
     {
         for(i in 0...grpValues.members.length)
         {
-            grpValues.members[i].changeText(Options.getData(options[valueNumber[i]].variable));
+            grpValues.members[i].changeText(FlxMath.roundDecimal(Options.getData(options[valueNumber[i]].variable), options[valueNumber[i]].decimals)+"");
         }
     }
 
@@ -182,6 +189,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
             var usesCheckbox:Bool = false;
             var isNumber:Bool = false;
             var isString:Bool = false;
+            var isMenu:Bool = false;
             
             switch(options[i].type)
             {
@@ -191,10 +199,15 @@ class BaseOptionsMenu extends MusicBeatSubstate
                     isNumber = true;
                 case "string":
                     isString = true;
+                case "menu":
+                    isMenu = true;
             }
 
-            swagOption.x += 300;
-            swagOption.xAdd = 200;
+            if(!isMenu)
+            {
+                swagOption.x += 300;
+                swagOption.xAdd = 200;
+            }
             
             // MAKE FLOAT/INT/STRING TYPES WORK HERE TOO!!!!!
 

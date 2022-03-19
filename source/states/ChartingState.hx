@@ -1,5 +1,6 @@
 package states;
 
+import mods.Mods;
 import game.Song;
 import util.CoolUtil;
 import game.Conductor;
@@ -234,7 +235,37 @@ class ChartingState extends MusicBeatState
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
-		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/characterList'));
+		#if sys
+		var charactersRaw:Array<String> = sys.FileSystem.readDirectory(Sys.getCwd() + 'assets/characters/');
+		#else
+		var charactersRaw:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/characterList'));
+		#end
+
+		var characters:Array<String> = [];
+
+		for(char in charactersRaw)
+		{
+			if(!char.contains('.'))
+				characters.push(char);
+		}
+
+		#if (MODS_ALLOWED && sys)
+		for(mod in Mods.activeMods)
+		{
+			if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters'))
+			{
+				var funnyShit:Array<String> = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/characters/');
+
+				for(char in funnyShit)
+				{
+					if(!char.contains('.'))
+						characters.push(char);
+				}
+			}
+		}
+		#end
+
+		// CoolUtil.coolTextFile(Paths.txt('data/characterList'))
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{

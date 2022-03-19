@@ -27,14 +27,14 @@ class HealthIcon extends FlxSprite
 	public function changeIcon(char:String = 'bf')
 	{
 		loadGraphic(Paths.image('icons/' + char));
-		loadGraphic(Paths.image('icons/' + char), true, Math.floor(width / 3), Math.floor(height));
+		loadGraphic(Paths.image('icons/' + char), true, Math.floor(height), Math.floor(height));
 
 		if (char.endsWith('-pixel') || char.startsWith('senpai') || char.startsWith('spirit'))
 			antialiasing = false;
 		else
 			antialiasing = Options.getData('anti-aliasing');
 
-		animation.add(char, [0, 1], 0, false, isPlayer);
+		animation.add(char, [0, 1, 2], 0, false, isPlayer);
 		animation.play(char);
 	}
 

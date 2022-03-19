@@ -51,6 +51,8 @@ class CharacterPart extends FlxSprite
 	public var cameraPosition:Array<Int> = [0, 0];
 
 	public var holdTimer:Float = 0;
+	public var heyTimer:Float = 0;
+	public var specialAnim:Bool = false;
 
 	public var json:Dynamic = null;
 
@@ -74,7 +76,13 @@ class CharacterPart extends FlxSprite
 		switch (curCharacter)
 		{
 			default:
-				json = Paths.parseJson('characters/$curCharacter/config', true);
+				json = Paths.parseJson('characters/$curCharacter/config');
+
+				if(json == null)
+				{
+					curCharacter = "dad";
+					json = Paths.parseJson('characters/$curCharacter/config');
+				}
 
 				if(json.packer_atlas)
 					frames = Paths.getPackerAtlas('characters/$curCharacter/assets', null, true);
@@ -162,31 +170,45 @@ class CharacterPart extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+		if(!debugMode && animation.curAnim != null)
 		{
-			if(animation.curAnim != null)
+			if(heyTimer > 0)
+			{
+				heyTimer -= elapsed;
+				if(heyTimer <= 0)
+				{
+					if(specialAnim && animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer')
+					{
+						specialAnim = false;
+						dance();
+					}
+					heyTimer = 0;
+				}
+			} else if(specialAnim && animation.curAnim.finished)
+			{
+				specialAnim = false;
+				dance();
+			}
+
+			if (!isPlayer)
 			{
 				if (animation.curAnim.name.startsWith('sing'))
+				{
 					holdTimer += elapsed;
-			}
-
-			if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
-			{
-				dance();
-				holdTimer = 0;
-			}
-		}
-
-		switch (curCharacter)
-		{
-			case 'gf':
-				if(animation.curAnim != null)
-				{					
-					if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
-						playAnim('danceRight');
 				}
-		}
 
+				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
+				{
+					dance();
+					holdTimer = 0;
+				}
+			}
+
+			if(animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null)
+			{
+				playAnim(animation.curAnim.name + '-loop');
+			}
+		}
 		super.update(elapsed);
 	}
 
@@ -197,7 +219,7 @@ class CharacterPart extends FlxSprite
 	 */
 	public function dance()
 	{
-		if (!debugMode)
+		if (!debugMode && !specialAnim)
 		{
 			if(danceLeftRight)
 			{
@@ -232,6 +254,7 @@ class CharacterPart extends FlxSprite
 	{
 		if(animation.getByName(AnimName) != null)
 		{
+			specialAnim = false;
 			animation.play(AnimName, Force, Reversed, Frame);
 
 			var daOffset = animOffsets.get(AnimName);

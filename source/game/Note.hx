@@ -44,7 +44,7 @@ class Note extends FlxSprite
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
-		x += 100;
+		x += 90;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
@@ -170,7 +170,7 @@ class Note extends FlxSprite
 						prevNote.playAnim('redhold');
 				}
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.52 * PlayState.SONG.speed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.52 * PlayState.instance.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}

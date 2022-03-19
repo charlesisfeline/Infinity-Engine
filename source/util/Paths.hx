@@ -119,8 +119,8 @@ class Paths
 	static public function getText(key:String)
 	{
 		#if (MODS_ALLOWED && sys)
-		if(sys.FileSystem.exists(Sys.getCwd() + '$key'))
-			return sys.io.File.getContent(Sys.getCwd() + '$key');
+		if(sys.FileSystem.exists(key))
+			return sys.io.File.getContent(key);
 		#end
 
 		return Assets.getText('$key');
@@ -369,18 +369,34 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?library:String, ?customPath:Bool = false)
 	{
-		if(customPath)
-			return FlxAtlasFrames.fromSparrow(image(key, library, customPath), file('$key.xml', library));
+		var xmlData:Dynamic = null;
 
-		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		if(!customPath)
+			xmlData = getText(file('images/$key.xml', library));
+		else
+			xmlData = getText(file('$key.xml', library));
+
+		if(customPath)
+		{
+			return FlxAtlasFrames.fromSparrow(image(key, library, customPath), xmlData);
+		}
+
+		return FlxAtlasFrames.fromSparrow(image(key, library), xmlData);
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String, ?customPath:Bool = false)
 	{
-		if(customPath)
-			return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library, customPath), file('$key.txt', library));
+		var txtData:Dynamic = null;
 
-		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
+		if(!customPath)
+			txtData = getText(file('images/$key.txt', library));
+		else
+			txtData = getText(file('$key.txt', library));
+
+		if(customPath)
+			return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library, customPath), txtData);
+
+		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), txtData);
 	}
 
 	static public function parseJson(key:String, ?customPath:Bool = false):Dynamic

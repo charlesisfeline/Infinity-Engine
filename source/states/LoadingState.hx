@@ -59,10 +59,12 @@ class LoadingState extends MusicBeatState
 			{
 				callbacks = new MultiCallback(onLoad);
 				var introComplete = callbacks.add("introComplete");
-				checkLoadSong(getSongPath());
 				
-				if (PlayState.SONG.needsVoices)
-					checkLoadSong(getVocalPath());
+				if (PlayState.SONG != null) {
+					checkLoadSong(getSongPath());
+					if (PlayState.SONG.needsVoices)
+						checkLoadSong(getVocalPath());
+				}
 
 				checkLibrary("shared");
 				

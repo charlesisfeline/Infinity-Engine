@@ -32,15 +32,15 @@ class Character extends FlxTypedGroup<CharacterPart>
 
 	public var cameraPosition:Array<Int> = [0, 0];
 
-	override public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false)
+	override public function new(x:Float, y:Float, ?character:String = 'bf', ?isPlayer:Bool = false, ?debug:Bool = false)
 	{
 		super();
 		this.isPlayer = isPlayer;
 
-		loadCharacter(x, y, character);
+		loadCharacter(x, y, character, debug);
 	}
 
-	public function loadCharacter(x, y, ?character:String = 'bf')
+	public function loadCharacter(x, y, ?character:String = 'bf', ?debug:Bool = false)
 	{
 		for(char in members)
 		{
@@ -55,6 +55,12 @@ class Character extends FlxTypedGroup<CharacterPart>
 		{
 			json = Paths.parseJson('characters/$character/config');
 
+			if(json == null)
+			{
+				character = "dad";
+				json = Paths.parseJson('characters/$character/config');
+			}
+
 			var characters:Array<String> = []; 
             if(json.characters != null)
                 characters = json.characters;
@@ -67,6 +73,7 @@ class Character extends FlxTypedGroup<CharacterPart>
 			for(char in characters)
 			{
 				var swagChar:CharacterPart = new CharacterPart(x, y, char, isPlayer);
+				swagChar.debugMode = debug;
 				add(swagChar);
 			}
 
