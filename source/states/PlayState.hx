@@ -1823,7 +1823,7 @@ class PlayState extends MusicBeatState
 
 			numScore.cameras = [camHUD];
 
-			if (combo >= 10 || combo == 0)
+			//if (combo >= 10 || combo == 0)
 				add(numScore);
 
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {

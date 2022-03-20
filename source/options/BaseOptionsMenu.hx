@@ -208,6 +208,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
                 swagOption.x += 300;
                 swagOption.xAdd = 200;
             }
+            else
+            {
+                swagOption.x += 100;
+                swagOption.xAdd = 50;
+            }
             
             // MAKE FLOAT/INT/STRING TYPES WORK HERE TOO!!!!!
 

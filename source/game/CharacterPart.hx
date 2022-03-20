@@ -71,6 +71,7 @@ class CharacterPart extends FlxSprite
 
 	public function loadCharacter(?character:String = "bf")
 	{
+		var debugCharacter = character;
 		curCharacter = character;
 
 		switch (curCharacter)
@@ -84,10 +85,20 @@ class CharacterPart extends FlxSprite
 					json = Paths.parseJson('characters/$curCharacter/config');
 				}
 
-				if(json.packer_atlas)
-					frames = Paths.getPackerAtlas('characters/$curCharacter/assets', null, true);
+				if(debugMode)
+				{
+					if(json.packer_atlas)
+						frames = Paths.getPackerAtlas('characters/$debugCharacter/assets', null, true);
+					else
+						frames = Paths.getSparrowAtlas('characters/$debugCharacter/assets', null, true);
+				}
 				else
-					frames = Paths.getSparrowAtlas('characters/$curCharacter/assets', null, true);
+				{
+					if(json.packer_atlas)
+						frames = Paths.getPackerAtlas('characters/$curCharacter/assets', null, true);
+					else
+						frames = Paths.getSparrowAtlas('characters/$curCharacter/assets', null, true);
+				}
 
 				anims = json.animations;
 				
@@ -252,14 +263,14 @@ class CharacterPart extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		if(animation.getByName(AnimName) != null)
-		{
+		//if(animation.getByName(AnimName) != null)
+		//{
 			specialAnim = false;
 			animation.play(AnimName, Force, Reversed, Frame);
 
-			var daOffset = animOffsets.get(AnimName);
 			if (animOffsets.exists(AnimName))
 			{
+				var daOffset = animOffsets.get(AnimName);
 				offset.set(daOffset[0], daOffset[1]);
 			}
 			else
@@ -281,7 +292,7 @@ class CharacterPart extends FlxSprite
 					danced = !danced;
 				}
 			}
-		}
+		//}
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)

@@ -86,7 +86,7 @@ class Options
 		[
 			"update-warnings", // the option's save data name
 			"bool", // the type
-			false // the value to set to
+			true // the value to set to
 		],
 		[
 			"botplay", // the option's save data name

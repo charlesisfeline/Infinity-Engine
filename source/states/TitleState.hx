@@ -331,12 +331,12 @@ class TitleState extends MusicBeatState
 			transitioning = true;
 			// FlxG.sound.music.stop();
 
-			if(Options.getData("update-warnings"))
+			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
-				new FlxTimer().start(2, function(tmr:FlxTimer)
-				{
-					// Check if version is outdated
+				// Check if version is outdated
 
+				if(Options.getData("update-warnings"))
+				{
 					var version:String = "v" + EngineSettings.version.trim();
 
 					if (version.trim() != updateVersion && !OutdatedState.leftState)
@@ -353,12 +353,12 @@ class TitleState extends MusicBeatState
 					{
 						FlxG.switchState(new MainMenuState());
 					}
-				});
-			}
-			else
-			{
-				FlxG.switchState(new MainMenuState());
-			}
+				}
+				else
+				{
+					FlxG.switchState(new MainMenuState());
+				}
+			});
 		}
 
 		if (pressedEnter && !skippedIntro)
