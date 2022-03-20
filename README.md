@@ -93,11 +93,11 @@ The compiling speed depends on your hardware.
 -----
 # ℹ️ What we have planned / What we're working on
 - Easy Modding (Working on it)
-- Modcharts/Lua Scripting (Works, but very buggy as of now)
-- Custom Notes (Using LUA or smth, could have a json for storing shit like "act like death note or use lua file")
+- Modcharts/Lua Scripting
+- Custom Notes (with LUA or setting in json file)
 - Extra Keys (1k to 9k, Could change eventually)
 - Replays
-- Achievements (Implemented, but hardcoded atm)
+- Achievements
 
 # ✅ Finished/Almost Finished
 - Gameplay
