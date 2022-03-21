@@ -77,26 +77,29 @@ class TitleState extends MusicBeatState
 		#if CHECK_FOR_UPDATES
 		if(!initialized)
 		{
-			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/CubeSword/Infinity-Engine/main/gitVersion.txt");
-			
-			http.onData = function (data:String)
+			if(Options.getData("update-warnings"))
 			{
-				var curVersion:String = EngineSettings.version.trim();
+				trace('checking for update');
+				var http = new haxe.Http("https://raw.githubusercontent.com/CubeSword/Infinity-Engine/main/gitVersion.txt");
+				
+				http.onData = function (data:String)
+				{
+					var curVersion:String = EngineSettings.version.trim();
 
-				updateVersion = data.split('\n')[0].trim();
-				trace('version online: ' + updateVersion + ', your version: ' + curVersion + '!');
-				if(updateVersion != curVersion) {
-					trace('versions arent matching!');
-					mustUpdate = true;
+					updateVersion = data.split('\n')[0].trim();
+					trace('version online: ' + updateVersion + ', your version: ' + curVersion + '!');
+					if(updateVersion != curVersion) {
+						trace('versions arent matching!');
+						mustUpdate = true;
+					}
 				}
+				
+				http.onError = function (error) {
+					trace('error: $error');
+				}
+				
+				http.request();
 			}
-			
-			http.onError = function (error) {
-				trace('error: $error');
-			}
-			
-			http.request();
 		}
 		#end
 
@@ -106,12 +109,15 @@ class TitleState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		PlayerSettings.init();
-		Options.init();
-		Mods.init();
-		UISkinList.init();
+		if(!initialized)
+		{
+			PlayerSettings.init();
+			Options.init();
+			Mods.init();
+			UISkinList.init();
 
-		CoolUtil.updateFramerate();
+			CoolUtil.updateFramerate();
+		}
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
@@ -143,11 +149,14 @@ class TitleState extends MusicBeatState
 		#end
 
 		#if desktop
-		DiscordClient.initialize();
-		
-		Application.current.onExit.add (function (exitCode) {
-			DiscordClient.shutdown();
-		 });
+		if(!initialized)
+		{
+			DiscordClient.initialize();
+			
+			Application.current.onExit.add (function (exitCode) {
+				DiscordClient.shutdown();
+			});
+		}
 		#end
 
 		if(Options.getData('volume') != null)

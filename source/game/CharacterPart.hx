@@ -1,5 +1,7 @@
 package game;
 
+import mods.Mods;
+import lime.utils.Assets;
 import options.OptionsHandler;
 import states.PlayState;
 import flixel.FlxG;
@@ -85,16 +87,45 @@ class CharacterPart extends FlxSprite
 					json = Paths.parseJson('characters/$curCharacter/config');
 				}
 
+				// auto detect if it's a packer atlas because that's awesome and cool
 				if(debugMode)
 				{
-					if(json.packer_atlas)
+					var assetsPackerExists = Assets.exists('assets/characters/$debugCharacter/assets.txt');
+					var modsPackerExists = false;
+			
+					#if (MODS_ALLOWED && sys)
+					for(mod in Mods.activeMods)
+					{
+						if(Mods.activeMods.length > 0)
+						{
+							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$debugCharacter/assets.txt'))
+								modsPackerExists = true;
+						}
+					}
+					#end
+
+					if(assetsPackerExists || modsPackerExists)
 						frames = Paths.getPackerAtlas('characters/$debugCharacter/assets', null, true);
 					else
 						frames = Paths.getSparrowAtlas('characters/$debugCharacter/assets', null, true);
 				}
 				else
 				{
-					if(json.packer_atlas)
+					var assetsPackerExists = Assets.exists('assets/characters/$curCharacter/assets.txt');
+					var modsPackerExists = false;
+
+					#if (MODS_ALLOWED && sys)
+					for(mod in Mods.activeMods)
+					{
+						if(Mods.activeMods.length > 0)
+						{
+							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$curCharacter/assets.txt'))
+								modsPackerExists = true;
+						}
+					}
+					#end
+
+					if(assetsPackerExists || modsPackerExists)
 						frames = Paths.getPackerAtlas('characters/$curCharacter/assets', null, true);
 					else
 						frames = Paths.getSparrowAtlas('characters/$curCharacter/assets', null, true);

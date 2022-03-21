@@ -339,7 +339,7 @@ class Stage extends FlxGroup
 				stageCurtains.scrollFactor.set(1.3, 1.3);
 				stageCurtains.active = false;
 
-				addObject(stageCurtains);
+				addObject(stageCurtains, "front");
 			}
         }
     }

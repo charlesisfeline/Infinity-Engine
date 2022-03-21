@@ -1,5 +1,7 @@
 package ui;
 
+import mods.Mods;
+import lime.utils.Assets;
 import flixel.FlxSprite;
 import options.OptionsHandler;
 
@@ -26,8 +28,25 @@ class HealthIcon extends FlxSprite
 
 	public function changeIcon(char:String = 'bf')
 	{
-		loadGraphic(Paths.image('icons/' + char));
-		loadGraphic(Paths.image('icons/' + char), true, Math.floor(height), Math.floor(height));
+		var assetsExists = Assets.exists('assets/images/icons/$char.png');
+		var modsExists = false;
+
+		#if (MODS_ALLOWED && sys)
+		for(mod in Mods.activeMods)
+		{
+			if(Mods.activeMods.length > 0)
+			{
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/images/icons/$char.png'))
+					modsExists = true;
+			}
+		}
+		#end
+
+		if(!assetsExists && !modsExists)
+			char = 'placeholder';
+		
+		loadGraphic(Paths.image('icons/$char'));
+		loadGraphic(Paths.image('icons/$char'), true, Math.floor(height), Math.floor(height));
 
 		if (char.endsWith('-pixel') || char.startsWith('senpai') || char.startsWith('spirit'))
 			antialiasing = false;

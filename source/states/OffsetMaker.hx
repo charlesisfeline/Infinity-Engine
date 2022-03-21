@@ -151,7 +151,9 @@ class OffsetMaker extends MusicBeatState
 				if(FlxG.keys.justPressed.ENTER) {
 					inputTexts[i].hasFocus = false;
 				}
-				FlxG.sound.soundTrayEnabled = !inputTexts[i].hasFocus; // disables volume keys from workign
+                FlxG.sound.muteKeys = [];
+                FlxG.sound.volumeDownKeys = [];
+                FlxG.sound.volumeUpKeys = [];
 				super.update(elapsed);
 				return;
 			}
