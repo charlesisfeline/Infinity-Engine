@@ -105,7 +105,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
                     case 'string':
                         var swagSkinNum:Int = 0;
 
-                        for(skinNum in 0...UISkinList.skins.length)
+                        for(skinNum in 0...options[curSelected].values.length)
                         {
                             if(options[curSelected].values[skinNum] == Options.getData(options[curSelected].variable))
                             {
@@ -166,7 +166,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
     {
         for(i in 0...grpValues.members.length)
         {
-            grpValues.members[i].changeText(FlxMath.roundDecimal(Options.getData(options[valueNumber[i]].variable), options[valueNumber[i]].decimals)+"");
+            switch(options[curSelected].type)
+            {
+                case 'float' | 'int':
+                    grpValues.members[i].changeText(FlxMath.roundDecimal(Options.getData(options[valueNumber[i]].variable), options[valueNumber[i]].decimals)+"");
+                case 'string':
+                    grpValues.members[i].changeText(Options.getData(options[valueNumber[i]].variable));
+            }
         }
     }
 

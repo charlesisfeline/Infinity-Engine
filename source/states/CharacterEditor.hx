@@ -254,6 +254,11 @@ class CharacterEditor extends MusicBeatState
 
     var fpsStepper:FlxUINumericStepper;
 
+    var shouldLoopBox:FlxUICheckBox;
+
+    var addBTN:FlxButton;
+    var removeBTN:FlxButton;
+
     // character tab shit
     var imageInput:FlxInputTextRTL;
     var iconInput:FlxInputTextRTL;
@@ -279,6 +284,7 @@ class CharacterEditor extends MusicBeatState
     var camYStepper:FlxUINumericStepper;
 
     var saveBTN:FlxButton;
+    var removeAnimBTN:FlxButton;
 
     function create_UI()
     {
@@ -292,7 +298,7 @@ class CharacterEditor extends MusicBeatState
 
         var uiBox = new FlxUITabMenu(null, tabs, false);
 
-        uiBox.resize(400, 340);
+        uiBox.resize(400, 240);
         uiBox.x = (FlxG.width - uiBox.width) - 20;
         uiBox.y = 20;
         uiBox.scrollFactor.set();
@@ -309,7 +315,20 @@ class CharacterEditor extends MusicBeatState
         trace("aninm warn pass");
 
 		animationDropdown = new FlxUIDropDownMenuCustom(warnText.x, warnText.y + 20, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(pressed:String) {
-            // do nothing for now i guess lmao
+			var selectedAnimation:Int = Std.parseInt(pressed);
+			var anim:Dynamic = character.anims[selectedAnimation];
+			animNameInput.text = anim.anim;
+			animInput.text = anim.name;
+			shouldLoopBox.checked = anim.loop;
+			fpsStepper.value = anim.fps;
+
+			var indicesStr:String = anim.indices.toString();
+			indicesInput.text = indicesStr.substr(1, indicesStr.length - 2);
+
+            curSelected = selectedAnimation;
+            changeSelection(0, false);
+
+            character.playAnim(anim.anim, true);
 		});
 
         trace("aninm dorpdwon pass");
@@ -338,6 +357,132 @@ class CharacterEditor extends MusicBeatState
 
         trace("fps pass");
 
+        shouldLoopBox = new FlxUICheckBox(animInput.x + (animInput.width + 10), animInput.y, null, null, "Should Loop", 80);
+        shouldLoopBox.checked = character.anims[curSelected].loop;
+
+        trace("checkbox pass");
+
+        shouldLoopBox.callback = function()
+        {
+            character.anims[curSelected].loop = shouldLoopBox.checked;
+
+            if(character.anims[curSelected].indices.length > 0)
+                character.animation.addByIndices(character.anims[curSelected].anim, character.anims[curSelected].name, character.anims[curSelected].indices, '', character.anims[curSelected].fps, character.anims[curSelected].loop);
+            else
+                character.animation.addByPrefix(character.anims[curSelected].anim, character.anims[curSelected].name, character.anims[curSelected].fps, character.anims[curSelected].loop);
+
+            character.playAnim(character.anims[curSelected].anim, true);
+        };    
+        
+        trace("checkbox callback pass");
+
+        addBTN = new FlxButton(indicesInput.x, indicesInput.y + 20, "Add/Update", function(){
+            if(!animList.contains(animNameInput.text))
+            {
+                var indices:Array<Int> = [];
+                var indicesStr:Array<String> = indicesInput.text.trim().split(',');
+                if(indicesStr.length > 1) {
+                    for (i in 0...indicesStr.length) {
+                        var index:Int = Std.parseInt(indicesStr[i]);
+                        if(indicesStr[i] != null && indicesStr[i] != '' && !Math.isNaN(index) && index > -1) {
+                            indices.push(index);
+                        }
+                    }
+                }
+
+                if(indices.length > 0)
+                    character.animation.addByIndices(animNameInput.text, animInput.text, indices, '', Math.floor(fpsStepper.value), shouldLoopBox.checked);
+                else
+                    character.animation.addByPrefix(animNameInput.text, animInput.text, Math.floor(fpsStepper.value), shouldLoopBox.checked);
+
+                character.anims.push(
+                    {
+                        "loop": shouldLoopBox.checked,
+                        "offsets": [
+                            0,
+                            0
+                        ],
+                        "anim": animNameInput.text,
+                        "fps": fpsStepper.value,
+                        "name": animInput.text,
+                        "indices": indices
+                    }
+                );
+
+                character.animOffsets.set(animNameInput.text, [0, 0]);
+
+                animList = [];
+                for(anim in character.anims)
+                {
+                    //trace(anim.anim);
+                    animList.push(anim.anim);
+                }
+
+                curSelected = animList.length - 1;
+                changeSelection(0, false);
+
+                character.playAnim(animNameInput.text, true);
+
+                reloadAnimationDropDown();
+            }
+            else
+            {
+                var indices:Array<Int> = [];
+                var indicesStr:Array<String> = indicesInput.text.trim().split(',');
+                if(indicesStr.length > 1) {
+                    for (i in 0...indicesStr.length) {
+                        var index:Int = Std.parseInt(indicesStr[i]);
+                        if(indicesStr[i] != null && indicesStr[i] != '' && !Math.isNaN(index) && index > -1) {
+                            indices.push(index);
+                        }
+                    }
+                }
+
+                if(indices.length > 0)
+                    character.animation.addByIndices(animNameInput.text, animInput.text, indices, '', Math.floor(fpsStepper.value), shouldLoopBox.checked);
+                else
+                    character.animation.addByPrefix(animNameInput.text, animInput.text, Math.floor(fpsStepper.value), shouldLoopBox.checked);
+
+                character.playAnim(animNameInput.text, true);
+            }
+        });
+
+        trace("anim btn pass");
+
+		var removeAnimBTN:FlxButton = new FlxButton(addBTN.x + (addBTN.width + 10), addBTN.y, "Remove", function() {
+            if(character.anims.length > 1)
+            {
+                for (anim in character.anims)
+                {
+                    if(animNameInput.text == anim.anim) {
+                        var resetAnim:Bool = false;
+                        if(character.animation.curAnim != null && anim.anim == character.animation.curAnim.name) resetAnim = true;
+
+                        if(character.animation.getByName(anim.anim) != null) {
+                            character.animation.remove(anim.anim);
+                        }
+                        if(character.animOffsets.exists(anim.anim)) {
+                            character.animOffsets.remove(anim.anim);
+                        }
+                        character.anims.remove(anim);
+
+                        animList = [];
+                        for(anim in character.anims)
+                        {
+                            //trace(anim.anim);
+                            animList.push(anim.anim);
+                        }
+
+                        if(resetAnim && character.anims.length > 0) {
+                            character.playAnim(character.anims[0].anim, true);
+                        }
+                        reloadAnimationDropDown();
+                        break;
+                    }
+                }
+            }
+		});
+
         animation_tab.add(warnText);
         //animation_tab.add(animationDropdown);
 
@@ -352,6 +497,10 @@ class CharacterEditor extends MusicBeatState
 
         animation_tab.add(warnText5);
         animation_tab.add(fpsStepper);
+
+        animation_tab.add(shouldLoopBox);
+        animation_tab.add(addBTN);
+        animation_tab.add(removeAnimBTN);
 
         // ANIMATION TAB DROPDOWNS
         // WE ADD THEM AFTER BECAUSE OF ORDERING REASONS LOL!!!
@@ -425,9 +574,12 @@ class CharacterEditor extends MusicBeatState
 
             animNameInput.text = character.anims[curSelected].anim;
             animInput.text = character.anims[curSelected].name;
-
+    
             var indicesStr = character.anims[curSelected].indices.toString();
             indicesInput.text = indicesStr.substr(1, indicesStr.length - 2);
+    
+            fpsStepper.value = character.anims[curSelected].fps;
+            shouldLoopBox.checked = character.anims[curSelected].loop;
 
             updatePointerPos();
 
@@ -511,21 +663,21 @@ class CharacterEditor extends MusicBeatState
 
         var warnText6:FlxText = new FlxText(charFlipBox.x + (charFlipBox.width + 10), warnText3.y, 0, "Character Position");
 
-        characterXStepper = new FlxUINumericStepper(charFlipBox.x + (charFlipBox.width + 10), charFlipBox.y, 1, character.json.position[0], -9999, 9999);
+        characterXStepper = new FlxUINumericStepper(charFlipBox.x + (charFlipBox.width + 10), charFlipBox.y, 10, character.json.position[0], -9999, 9999);
         characterXStepper.value = character.json.position[0];
         characterXStepper.name = "CharX";
 
-        characterYStepper = new FlxUINumericStepper(characterXStepper.x + (characterXStepper.width + 10), charFlipBox.y, 1, character.json.position[1], -9999, 9999);
+        characterYStepper = new FlxUINumericStepper(characterXStepper.x + (characterXStepper.width + 10), charFlipBox.y, 10, character.json.position[1], -9999, 9999);
         characterYStepper.value = character.json.position[1];
         characterYStepper.name = "CharY";
 
         var warnText7:FlxText = new FlxText(warnText6.x, characterYStepper.y + 20, 0, "Camera Position");
 
-        camXStepper = new FlxUINumericStepper(charFlipBox.x + (charFlipBox.width + 10), warnText7.y + 20, 1, character.json.position[0], -9999, 9999);
+        camXStepper = new FlxUINumericStepper(charFlipBox.x + (charFlipBox.width + 10), warnText7.y + 20, 10, character.json.position[0], -9999, 9999);
         camXStepper.value = character.json.camera_position[0];
         camXStepper.name = "CamX";
 
-        camYStepper = new FlxUINumericStepper(characterXStepper.x + (characterXStepper.width + 10), camXStepper.y, 1, character.json.position[1], -9999, 9999);
+        camYStepper = new FlxUINumericStepper(characterXStepper.x + (characterXStepper.width + 10), camXStepper.y, 10, character.json.position[1], -9999, 9999);
         camYStepper.value = character.json.camera_position[1];
         camYStepper.name = "CamY";
 
@@ -749,7 +901,7 @@ class CharacterEditor extends MusicBeatState
             }
         }
 
-		var inputTexts:Array<FlxInputTextRTL> = [imageInput, iconInput];
+		var inputTexts:Array<FlxInputTextRTL> = [imageInput, iconInput, animNameInput, animInput, indicesInput];
 		for (i in 0...inputTexts.length) {
 			if(inputTexts[i].hasFocus) {
                 FlxG.sound.muteKeys = [];
@@ -890,7 +1042,14 @@ class CharacterEditor extends MusicBeatState
             character.playAnim(animList[curSelected]);
         }
 
+        animNameInput.text = character.anims[curSelected].anim;
+        animInput.text = character.anims[curSelected].name;
+
+        var indicesStr = character.anims[curSelected].indices.toString();
+        indicesInput.text = indicesStr.substr(1, indicesStr.length - 2);
+
         fpsStepper.value = character.anims[curSelected].fps;
+        shouldLoopBox.checked = character.anims[curSelected].loop;
     }
 
 	function ClipboardAdd(prefix:String = ''):String {

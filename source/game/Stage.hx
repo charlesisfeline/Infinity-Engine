@@ -77,6 +77,31 @@ class Stage extends FlxGroup
     {
         curStage = stage;
 
+		for(object in members)
+		{
+			remove(object);
+			object.kill();
+			object.destroy();
+		}
+
+		for(object in infrontOfGFSprites.members)
+		{
+			remove(object);
+			object.kill();
+			object.destroy();
+		}
+
+		for(object in foregroundSprites.members)
+		{
+			remove(object);
+			object.kill();
+			object.destroy();
+		}
+
+		clear();
+		infrontOfGFSprites.clear();
+		foregroundSprites.clear();
+
         switch(stage)
 		{
             default:

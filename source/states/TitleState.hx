@@ -109,15 +109,12 @@ class TitleState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		if(!initialized)
-		{
-			PlayerSettings.init();
-			Options.init();
-			Mods.init();
-			UISkinList.init();
+		PlayerSettings.init();
+		Options.init();
+		Mods.init();
+		UISkinList.init();
 
-			CoolUtil.updateFramerate();
-		}
+		CoolUtil.updateFramerate();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 

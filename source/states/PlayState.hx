@@ -840,8 +840,11 @@ class PlayState extends MusicBeatState
 
 		if (!paused)
 			FlxG.sound.playMusic(Paths.inst(Paths.formatToSongPath(PlayState.SONG.song)), 1, false);
+		
 		FlxG.sound.music.onComplete = endSong;
 		vocals.play();
+
+		vocals.volume = 1;
 
 		#if desktop
 		// Song duration in a float, useful for the time left feature
@@ -1866,78 +1869,111 @@ class PlayState extends MusicBeatState
 		curSection += 1;
 	}
 
+	var justPressedArray:Array<Bool> = [];
+	var releasedArray:Array<Bool> = [];
+	var justReleasedArray:Array<Bool> = [];
+	var heldArray:Array<Bool> = [];
+	var previousReleased:Array<Bool> = [];
+
 	private function keyShit():Void
 	{
 		var binds:Array<String> = Options.getData('keybinds')[keyCount - 1];
 		var bindsAlt:Array<String> = Options.getData('alt-keybinds')[keyCount - 1];
 
-		// HOLDING
-		var up = FlxG.keys.checkStatus(FlxKey.fromString(binds[2]), FlxInputState.PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[2]), FlxInputState.PRESSED);
-		var right = FlxG.keys.checkStatus(FlxKey.fromString(binds[3]), FlxInputState.PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[3]), FlxInputState.PRESSED);
-		var down = FlxG.keys.checkStatus(FlxKey.fromString(binds[1]), FlxInputState.PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[1]), FlxInputState.PRESSED);
-		var left = FlxG.keys.checkStatus(FlxKey.fromString(binds[0]), FlxInputState.PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[0]), FlxInputState.PRESSED);
-
-		var upP = FlxG.keys.checkStatus(FlxKey.fromString(binds[2]), FlxInputState.JUST_PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[2]), FlxInputState.JUST_PRESSED);
-		var rightP = FlxG.keys.checkStatus(FlxKey.fromString(binds[3]), FlxInputState.JUST_PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[3]), FlxInputState.JUST_PRESSED);
-		var downP = FlxG.keys.checkStatus(FlxKey.fromString(binds[1]), FlxInputState.JUST_PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[1]), FlxInputState.JUST_PRESSED);
-		var leftP = FlxG.keys.checkStatus(FlxKey.fromString(binds[0]), FlxInputState.JUST_PRESSED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[0]), FlxInputState.JUST_PRESSED);
-
-		var upJR = FlxG.keys.checkStatus(FlxKey.fromString(binds[2]), FlxInputState.JUST_RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[2]), FlxInputState.JUST_RELEASED);
-		var rightJR = FlxG.keys.checkStatus(FlxKey.fromString(binds[3]), FlxInputState.JUST_RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[3]), FlxInputState.JUST_RELEASED);
-		var downJR = FlxG.keys.checkStatus(FlxKey.fromString(binds[1]), FlxInputState.JUST_RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[1]), FlxInputState.JUST_RELEASED);
-		var leftJR = FlxG.keys.checkStatus(FlxKey.fromString(binds[0]), FlxInputState.JUST_RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[0]), FlxInputState.JUST_RELEASED);
-
-		var upR = FlxG.keys.checkStatus(FlxKey.fromString(binds[2]), FlxInputState.RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[2]), FlxInputState.RELEASED);
-		var rightR = FlxG.keys.checkStatus(FlxKey.fromString(binds[3]), FlxInputState.RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[3]), FlxInputState.RELEASED);
-		var downR = FlxG.keys.checkStatus(FlxKey.fromString(binds[1]), FlxInputState.RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[1]), FlxInputState.RELEASED);
-		var leftR = FlxG.keys.checkStatus(FlxKey.fromString(binds[0]), FlxInputState.RELEASED) || FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[0]), FlxInputState.RELEASED);
-
-		var justPressedArray:Array<Bool> = [leftP, downP, upP, rightP];
-		var heldArray:Array<Bool> = [left, down, up, right];
-		var justReleasedArray:Array<Bool> = [leftJR, downJR, upJR, rightJR];
-		var releasedArray:Array<Bool> = [leftR, downR, upR, rightR];
-
-		// FlxG.watch.addQuick('asdfa', upP);
-		if(justPressedArray.contains(true) && generatedMusic)
+		if(generatedMusic && startedCountdown)
 		{
-			var possibleNotes:Array<Note> = [];
-			var dontHit:Array<Note> = [];
-			
-			notes.forEachAlive(function(note:Note) {
-				note.calculateCanBeHit();
-
-				if(note.canBeHit && note.mustPress && !note.tooLate && !note.isSustainNote)
-					possibleNotes.push(note);
-			});
-
-			possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
-
-			var noteDataPossibles:Array<Bool> = [];
-			var noteDataTimes:Array<Float> = [];
-
-			for(i in 0...keyCount)
+			if(!Options.getData("botplay"))
 			{
-				noteDataPossibles.push(false);
-				noteDataTimes.push(-1);
-			}
+				justPressedArray = [];
+				justReleasedArray = [];
+		
+				previousReleased = releasedArray;
 
-			if (possibleNotes.length > 0)
-			{
-				for(i in 0...possibleNotes.length)
-				{	
-					if(justPressedArray[possibleNotes[i].noteData] && !noteDataPossibles[possibleNotes[i].noteData])
+				releasedArray = [];
+				heldArray = [];
+
+				for(i in 0...binds.length)
+				{
+					justPressedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(binds[i]), FlxInputState.JUST_PRESSED);
+					releasedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(binds[i]), FlxInputState.RELEASED);
+					justReleasedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(binds[i]), FlxInputState.JUST_RELEASED);
+					heldArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(binds[i]), FlxInputState.PRESSED);
+	
+					if(releasedArray[i] == true && keyCount == 4)
 					{
-						noteDataPossibles[possibleNotes[i].noteData] = true;
-						noteDataTimes[possibleNotes[i].noteData] = possibleNotes[i].strumTime;
-
-						for(char in boyfriend.members)
-						{
-							char.holdTimer = 0;
-						}
-
-						goodNoteHit(possibleNotes[i]);
+						justPressedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[i]), FlxInputState.JUST_PRESSED);
+						releasedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[i]), FlxInputState.RELEASED);
+						justReleasedArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[i]), FlxInputState.JUST_RELEASED);
+						heldArray[i] = FlxG.keys.checkStatus(FlxKey.fromString(bindsAlt[i]), FlxInputState.PRESSED);
 					}
+				}
 
+				// WHEN I IMPLEMENT LUA THIS WILL BE USED LOL!!!
+
+				/*for (i in 0...justPressedArray.length) {
+					if (justPressedArray[i] == true)
+						executeALuaState("keyPressed", [i]);
+				};
+				
+				for (i in 0...releasedArray.length) {
+					if (releasedArray[i] == true)
+						executeALuaState("keyReleased", [i]);
+				};*/
+				
+				if(justPressedArray.contains(true) && generatedMusic)
+				{
+					// variables
+					var possibleNotes:Array<Note> = [];
+					var dontHit:Array<Note> = [];
+					
+					// notes you can hit lol
+					notes.forEachAlive(function(note:Note) {
+						note.calculateCanBeHit();
+
+						if(note.canBeHit && note.mustPress && !note.tooLate && !note.isSustainNote)
+							possibleNotes.push(note);
+					});
+	
+					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+		
+					var noteDataPossibles:Array<Bool> = [];
+					var rythmArray:Array<Bool> = [];
+					var noteDataTimes:Array<Float> = [];
+	
+					for(i in 0...keyCount)
+					{
+						noteDataPossibles.push(false);
+						noteDataTimes.push(-1);
+	
+						rythmArray.push(false);
+					}
+		
+					// if there is actual notes to hit
+					if (possibleNotes.length > 0)
+					{
+						for(i in 0...possibleNotes.length)
+						{	
+							if(justPressedArray[possibleNotes[i].noteData] && !noteDataPossibles[possibleNotes[i].noteData])
+							{
+								noteDataPossibles[possibleNotes[i].noteData] = true;
+								noteDataTimes[possibleNotes[i].noteData] = possibleNotes[i].strumTime;
+	
+								for(char in boyfriend.members)
+								{
+									char.holdTimer = 0;
+								}
+	
+								goodNoteHit(possibleNotes[i]);
+	
+								if(dontHit.contains(possibleNotes[i]))
+								{
+									noteMiss(possibleNotes[i].noteData);
+									rythmArray[i] = true;
+								}
+							}
+						}
+					}
+	
 					if(possibleNotes.length > 0)
 					{
 						for(i in 0...possibleNotes.length)
@@ -1951,53 +1987,89 @@ class PlayState extends MusicBeatState
 					{
 						for(i in 0...justPressedArray.length)
 						{
-							if(justPressedArray[i] && !noteDataPossibles[i])
+							if(justPressedArray[i] && !noteDataPossibles[i] && !rythmArray[i])
 								noteMiss(i);
 						}
 					}
 				}
-			}
-		}
-
-		if (heldArray.contains(true) && generatedMusic)
-		{
-			notes.forEachAlive(function(daNote:Note)
-			{
-				if(heldArray[daNote.noteData] && daNote.isSustainNote && daNote.mustPress)
+		
+				if (heldArray.contains(true) && generatedMusic)
 				{
-					if(daNote.canBeHit && daNote.mustPress && daNote.isSustainNote)
+					notes.forEachAlive(function(daNote:Note)
 					{
-						for(char in boyfriend.members)
+						if(heldArray[daNote.noteData] && daNote.isSustainNote && daNote.mustPress)
 						{
-							char.holdTimer = 0;
+							// goodness this if statement is shit lmfao
+							if(((daNote.strumTime <= Conductor.songPosition && daNote.shouldHit) || 
+								(!daNote.shouldHit && (daNote.strumTime > (Conductor.songPosition - (Conductor.safeZoneOffset * 0.4))
+								&& daNote.strumTime < (Conductor.songPosition + Conductor.safeZoneOffset * 0.2)))))
+							{
+								for(char in boyfriend.members)
+								{
+									char.holdTimer = 0;
+								}
+	
+								goodNoteHit(daNote);
+							}
 						}
-
-						goodNoteHit(daNote);
-					}
+					});
 				}
-			});
-		}
+		
+				for(char in boyfriend.members)
+				{
+					if(char.animation.curAnim != null)
+						if (char.holdTimer > Conductor.stepCrochet * boyfriend.json.sing_duration * 0.001 && !heldArray.contains(true))
+							if (char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss'))
+								char.dance();
+				}
+		
+				playerStrums.forEach(function(spr:StrumNote)
+				{
+					if (justPressedArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
+					{
+						spr.playAnim('pressed');
+					}
 
-		for(char in boyfriend.members)
-		{
-			if(char.animation.curAnim != null)
-				if (char.holdTimer > Conductor.stepCrochet * char.singDuration * 0.001 && !heldArray.contains(true))
-					if (char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss'))
-						char.dance();
-		}
-
-		playerStrums.forEach(function(spr:StrumNote)
-		{
-			if (justPressedArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
-			{
-				spr.playAnim('pressed', true);
+					if (releasedArray[spr.ID])
+					{
+						spr.playAnim('static');
+					}
+				});
 			}
-
-			if (justReleasedArray[spr.ID])
+			else
 			{
-				spr.playAnim('static', true);
+				notes.forEachAlive(function(note:Note) {
+					if(note.shouldHit)
+					{
+						if(note.mustPress && note.strumTime <= Conductor.songPosition)
+						{
+							for(char in boyfriend.members)
+							{
+								char.holdTimer = 0;
+							}
+		
+							goodNoteHit(note);
+						}
+					}
+				});
+	
+				playerStrums.forEach(function(spr:StrumNote)
+				{
+					if(spr.animation.finished)
+					{
+						spr.playAnim("static");
+					}
+				});
+	
+				for(char in boyfriend.members)
+				{
+					if(char.animation.curAnim != null)
+						if (char.holdTimer > Conductor.stepCrochet * boyfriend.json.sing_duration * 0.001)
+							if (char.animation.curAnim.name.startsWith('sing') && !char.animation.curAnim.name.endsWith('miss'))
+								char.dance();
+				}
 			}
-		});
+		}
 	}
 
 	function noteMiss(direction:Int = 1):Void

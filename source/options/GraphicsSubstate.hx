@@ -52,7 +52,7 @@ class GraphicsSubstate extends BaseOptionsMenu
         var option:Option = new Option(
             "UI Skin",
             "Change the skin of your notes and ratings.",
-            "ui-skin", // when using the "menu" type, a value isn't needed, since it takes you to a menu.
+            "ui-skin",
             "string",
             UISkinList.skins
         );
