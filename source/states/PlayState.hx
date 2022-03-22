@@ -1,5 +1,6 @@
 package states;
 
+import mods.Mods;
 import game.Stage;
 import options.UISkinList;
 import options.OptionsHandler;
@@ -210,8 +211,11 @@ class PlayState extends MusicBeatState
 
 		UISkinList.init();
 
-		Paths.inst(Paths.formatToSongPath(PlayState.SONG.song));
-		Paths.voices(Paths.formatToSongPath(PlayState.SONG.song));
+		var songToCache = Paths.formatToSongPath(PlayState.SONG.song);
+
+		// stupid way of caching but i think it works so uh lmao L skill issue +99999 ratio
+		FlxG.sound.playMusic(Paths.inst(Paths.formatToSongPath(PlayState.SONG.song)), 0, false);
+		FlxG.sound.playMusic(Paths.voices(Paths.formatToSongPath(PlayState.SONG.song)), 0, false);
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
@@ -987,7 +991,7 @@ class PlayState extends MusicBeatState
 			}
 
 			babyArrow.playAnim('static');
-			babyArrow.x += 90;
+			babyArrow.x += 95;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
 			strumLineNotes.add(babyArrow);
