@@ -30,7 +30,6 @@ typedef CharacterData = {
 	var camera_position:Array<Int>;
 	var sing_duration:Float;
 	var scale:Float;
-	var packer_atlas:Bool;
 	var characters:Array<String>;
 };
 

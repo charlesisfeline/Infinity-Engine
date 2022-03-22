@@ -15,7 +15,7 @@ import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
-import flixel.addons.ui.FlxUIDropDownMenu;
+import ui.FlxUIDropDownMenuCustom;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
@@ -267,13 +267,13 @@ class ChartingState extends MusicBeatState
 
 		// CoolUtil.coolTextFile(Paths.txt('data/characterList'))
 
-		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		var player1DropDown = new FlxUIDropDownMenuCustom(10, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player1 = characters[Std.parseInt(character)];
 		});
 		player1DropDown.selectedLabel = _song.player1;
 
-		var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		var player2DropDown = new FlxUIDropDownMenuCustom(140, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player2 = characters[Std.parseInt(character)];
 		});
