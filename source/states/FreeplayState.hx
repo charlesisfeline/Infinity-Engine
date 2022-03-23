@@ -22,6 +22,7 @@ import haxe.Json;
 import mods.Mods;
 import ui.Alphabet;
 import ui.HealthIcon;
+import flixel.math.FlxMath;
 
 using StringTools;
 
@@ -35,18 +36,22 @@ class FreeplayState extends MusicBeatState
 
 	static var curSelected:Int = 0;
 	static var curDifficulty:Int = 1;
+	static var curSpeed:Float = 1;
 
 	static var lastDifficultyName:String = '';
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
 	var diffText:FlxText;
+	var speedText:FlxText;
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
 
 	var bg:FlxSprite;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
+
+	var holdTime:Float = 0;
 
 	var weekJsonDirs:Array<String> = [];
 	var weekJsons:Array<String> = [];
@@ -82,14 +87,36 @@ class FreeplayState extends MusicBeatState
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 		scoreText.setFormat(Paths.font("vcr"), 32, FlxColor.WHITE, CENTER);
+		scoreText.alignment = CENTER;
 
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 
 		diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
 		diffText.font = scoreText.font;
+		diffText.alignment = CENTER;
 		add(diffText);
+
+		speedText = new FlxText(FlxG.width, diffText.y + 36, 0, "", 24);
+		speedText.font = scoreText.font;
+		speedText.alignment = CENTER;
+		add(speedText);
+
+		curSpeed = FlxMath.roundDecimal(curSpeed, 2);
+
+		#if !sys
+		curSpeed = 1;
+		#end
+
+		if(curSpeed < 0.25)
+			curSpeed = 0.25;
+
+		#if sys
+		speedText.text = "Speed: " + curSpeed + " (SHIFT+R)";
+		#else
+		speedText.text = "";
+		#end
 
 		add(scoreText);
 
@@ -231,11 +258,64 @@ class FreeplayState extends MusicBeatState
 
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
 
+		var funnyObject:FlxText = scoreText;
+
+		if(speedText.width >= scoreText.width && speedText.width >= diffText.width)
+			funnyObject = speedText;
+
+		if(diffText.width >= scoreText.width && diffText.width >= speedText.width)
+			funnyObject = diffText;
+
+		scoreBG.x = funnyObject.x - 6;
+
+		if(Std.int(scoreBG.width) != Std.int(funnyObject.width + 6))
+			scoreBG.makeGraphic(Std.int(funnyObject.width + 6), 108, FlxColor.BLACK);
+
+		curSpeed = FlxMath.roundDecimal(curSpeed, 2);
+
+		#if !sys
+		curSpeed = 1;
+		#end
+
+		if(curSpeed < 0.25)
+			curSpeed = 0.25;
+
+		#if sys
+		speedText.text = "Speed: " + curSpeed + " (R+SHIFT)";
+		#else
+		speedText.text = "";
+		#end
+
+		var left = controls.UI_LEFT;
+		var right = controls.UI_RIGHT;
+
+		var leftP = controls.UI_LEFT_P;
+		var rightP = controls.UI_RIGHT_P;
+		var shift = FlxG.keys.pressed.SHIFT;
+
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 		var space = FlxG.keys.justPressed.SPACE;
 
 		var accepted = controls.ACCEPT;
+
+		if(-1 * Math.floor(FlxG.mouse.wheel) != 0 && !shift)
+			changeSelection(-1 * Math.floor(FlxG.mouse.wheel));
+		else if(-1 * (Math.floor(FlxG.mouse.wheel) / 10) != 0 && shift)
+		{
+			curSpeed += -1 * (Math.floor(FlxG.mouse.wheel) / 10);
+
+			#if cpp
+			@:privateAccess
+			{
+				if(FlxG.sound.music.active && FlxG.sound.music.playing)
+					lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+	
+				if (vocals.active && vocals.playing)
+					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+			}
+			#end
+		}
 
 		if (upP)
 		{
@@ -246,10 +326,52 @@ class FreeplayState extends MusicBeatState
 			changeSelection(1);
 		}
 
-		if (controls.UI_LEFT_P)
+		if(leftP && !shift)
 			changeDiff(-1);
-		if (controls.UI_RIGHT_P)
+		if(rightP && !shift)
 			changeDiff(1);
+		if((left || right) && shift) {
+			var daMultiplier:Float = left ? -0.05 : 0.05;
+
+			holdTime += elapsed;
+
+			if(holdTime > 0.5 || leftP || rightP)
+			{
+				curSpeed += daMultiplier;
+	
+				if(curSpeed < 0.25)
+					curSpeed = 0.25;
+
+				#if cpp
+				@:privateAccess
+				{
+					if(FlxG.sound.music.active && FlxG.sound.music.playing)
+						lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+		
+					if (vocals.active && vocals.playing)
+						lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+				}
+				#end
+			}
+		} else {
+			holdTime = 0;
+		}
+
+		if(shift && FlxG.keys.justPressed.R)
+		{
+			curSpeed = 1;
+
+			#if cpp
+			@:privateAccess
+			{
+				if(FlxG.sound.music.active && FlxG.sound.music.playing)
+					lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+	
+				if (vocals.active && vocals.playing)
+					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+			}
+			#end
+		}
 
 		if (controls.BACK)
 		{
@@ -285,6 +407,17 @@ class FreeplayState extends MusicBeatState
 			vocals.play();
 
             FlxG.sound.list.add(vocals);
+
+			#if cpp
+			@:privateAccess
+			{
+				if(FlxG.sound.music.active && FlxG.sound.music.playing && !FlxG.keys.justPressed.ENTER)
+					lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+	
+				if(vocals.active && vocals.playing && !FlxG.keys.justPressed.ENTER)
+					lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+			}
+			#end
 		}
 		else if (accepted)
 		{
@@ -295,6 +428,7 @@ class FreeplayState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, songName);
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
+			PlayState.songMultiplier = curSpeed;
 
 			LoadingState.loadAndSwitchState(new PlayState());
 		}
@@ -304,10 +438,13 @@ class FreeplayState extends MusicBeatState
 
 	function positionScore()
 	{
-		scoreText.x = FlxG.width - scoreText.width - 6;
+		scoreBG.x = FlxG.width - (scoreBG.width);
 
-		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
-		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
+		scoreText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
+		scoreText.x -= scoreText.width / 2;
+
+		speedText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
+		speedText.x -= speedText.width / 2;
 
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;

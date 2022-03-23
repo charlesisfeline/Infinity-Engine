@@ -75,6 +75,7 @@ class PlayState extends MusicBeatState
 	public static var storyDifficulty:Int = 1;
 
 	public static var instance:PlayState;
+	public static var songMultiplier:Float = 1;
 
 	public var keyCount:Int = 4;
 	public var isPixelStage:Bool = false;
@@ -151,6 +152,8 @@ class PlayState extends MusicBeatState
 
 	public var speed:Float = 1;
 
+	public var usedPractice:Bool = false;
+
 	var letterRatings:Array<String> = [
 		"S++",
 		"S+",
@@ -182,11 +185,14 @@ class PlayState extends MusicBeatState
 
 	var inCutscene:Bool = false;
 
+	public static var previousScrollSpeedLmao:Float = 0;
+
+	public var songLength:Float = 0;
+
 	#if desktop
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
 	var iconRPC:String = "";
-	var songLength:Float = 0;
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
 	#end
@@ -237,13 +243,38 @@ class PlayState extends MusicBeatState
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
 
+		#if !sys
+		songMultiplier = 1;
+		#end
+
+		if(songMultiplier < 0.25)
+			songMultiplier = 0.25;
+
+		if(SONG.timescale == null)
+			SONG.timescale = [4, 4];
+
+		Conductor.timeScale = SONG.timescale;
+
+		Conductor.mapBPMChanges(SONG, songMultiplier);
+		Conductor.changeBPM(SONG.bpm, songMultiplier);
+
+		previousScrollSpeedLmao = SONG.speed;
+
 		speed = SONG.speed;
 
+		SONG.speed /= songMultiplier;
+
+		if(SONG.speed < 0.1 && songMultiplier > 1)
+			SONG.speed = 0.1;
+
 		if(Options.getData('scroll-speed') > 0)
-			speed = Options.getData('scroll-speed');
+			speed = Options.getData('scroll-speed') / songMultiplier;
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
+
+		Conductor.recalculateStuff(songMultiplier);
+		Conductor.safeZoneOffset *= songMultiplier;
 
 		switch (SONG.song.toLowerCase())
 		{
@@ -740,7 +771,7 @@ class PlayState extends MusicBeatState
 
 		var swagCounter:Int = 0;
 
-		startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
+		startTimer = new FlxTimer().start((Conductor.crochet / 1000) / songMultiplier, function(tmr:FlxTimer)
 		{
 			dad.dance();
 			gf.dance();
@@ -775,7 +806,7 @@ class PlayState extends MusicBeatState
 
 					ready.screenCenter();
 					add(ready);
-					FlxTween.tween(ready, {alpha: 0}, Conductor.crochet / 1000, {
+					FlxTween.tween(ready, {alpha: 0}, (Conductor.crochet / 1000) / songMultiplier, {
 						ease: FlxEase.cubeInOut,
 						onComplete: function(twn:FlxTween)
 						{
@@ -792,7 +823,7 @@ class PlayState extends MusicBeatState
 
 					set.screenCenter();
 					add(set);
-					FlxTween.tween(set, {alpha: 0}, Conductor.crochet / 1000, {
+					FlxTween.tween(set, {alpha: 0}, (Conductor.crochet / 1000) / songMultiplier, {
 						ease: FlxEase.cubeInOut,
 						onComplete: function(twn:FlxTween)
 						{
@@ -811,7 +842,7 @@ class PlayState extends MusicBeatState
 
 					go.screenCenter();
 					add(go);
-					FlxTween.tween(go, {alpha: 0}, Conductor.crochet / 1000, {
+					FlxTween.tween(go, {alpha: 0}, (Conductor.crochet / 1000) / songMultiplier, {
 						ease: FlxEase.cubeInOut,
 						onComplete: function(twn:FlxTween)
 						{
@@ -841,17 +872,29 @@ class PlayState extends MusicBeatState
 		if (!paused)
 			FlxG.sound.playMusic(Paths.inst(Paths.formatToSongPath(PlayState.SONG.song)), 1, false);
 		
-		FlxG.sound.music.onComplete = endSong;
+		//FlxG.sound.music.onComplete = endSong;
 		vocals.play();
 
 		vocals.volume = 1;
 
-		#if desktop
+		#if cpp
+		@:privateAccess
+		{
+			lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, songMultiplier);
+
+			if (vocals.playing)
+				lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, songMultiplier);
+		}
+		#end
+
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
 
+		#if desktop
+		Conductor.recalculateStuff(songMultiplier);
+
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength);
+		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength / songMultiplier);
 		#end
 	}
 
@@ -862,7 +905,7 @@ class PlayState extends MusicBeatState
 		// FlxG.log.add(ChartParser.parse());
 
 		var songData = SONG;
-		Conductor.changeBPM(songData.bpm);
+		Conductor.changeBPM(songData.bpm, songMultiplier);
 
 		curSong = songData.song;
 
@@ -886,11 +929,11 @@ class PlayState extends MusicBeatState
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 		for (section in noteData)
 		{
-			var coolSection:Int = Std.int(section.lengthInSteps / 4);
+			Conductor.recalculateStuff(songMultiplier);
 
 			for (songNotes in section.sectionNotes)
 			{
-				var daStrumTime:Float = songNotes[0] + Options.getData('note-offset');
+				var daStrumTime:Float = songNotes[0] + (Options.getData('note-offset') * songMultiplier);
 				var daNoteData:Int = Std.int(songNotes[1] % 4);
 
 				var gottaHitNote:Bool = section.mustHitSection;
@@ -1058,7 +1101,7 @@ class PlayState extends MusicBeatState
 			#if desktop
 			if (startTimer.finished)
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength - Conductor.songPosition);
+				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, ((songLength - Conductor.songPosition) / songMultiplier >= 1 ? (songLength - Conductor.songPosition) / songMultiplier : 1));
 			}
 			else
 			{
@@ -1077,7 +1120,7 @@ class PlayState extends MusicBeatState
 		{
 			if (Conductor.songPosition > 0.0)
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength - Conductor.songPosition);
+				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, ((songLength - Conductor.songPosition) / songMultiplier >= 1 ? (songLength - Conductor.songPosition) / songMultiplier : 1));
 			}
 			else
 			{
@@ -1109,6 +1152,16 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = FlxG.sound.music.time;
 		vocals.time = Conductor.songPosition;
 		vocals.play();
+
+		#if cpp
+		@:privateAccess
+		{
+			lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, songMultiplier);
+
+			if (vocals.playing)
+				lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, songMultiplier);
+		}
+		#end
 	}
 
 	private var paused:Bool = false;
@@ -1133,7 +1186,28 @@ class PlayState extends MusicBeatState
 				iconP1.animation.play('bf-old');
 		}*/
 
+		if(!startingSong && (FlxG.sound.music != null && !FlxG.sound.music.playing) && !endingSong)
+		{
+			FlxG.sound.music.play();
+			vocals.play();
+			resyncVocals();
+		}
+
 		super.update(elapsed);
+
+		if (generatedMusic)
+		{
+			if (startedCountdown && canPause && !endingSong)
+			{
+				// Song ends abruptly on slow rate even with second condition being deleted, 
+				// and if it's deleted on songs like cocoa then it would end without finishing instrumental fully,
+				// so no reason to delete it at all
+				if (FlxG.sound.music.length - Conductor.songPosition <= 20)
+				{
+					endSong();
+				}
+			}
+		}
 
 		calculateAccuracy();
 		accuracyNum = FlxMath.roundDecimal(accuracy * 100, 2);
@@ -1222,7 +1296,7 @@ class PlayState extends MusicBeatState
 		{
 			if (startedCountdown)
 			{
-				Conductor.songPosition += FlxG.elapsed * 1000;
+				Conductor.songPosition += (FlxG.elapsed * 1000) * songMultiplier;
 				if (Conductor.songPosition >= 0)
 					startSong();
 			}
@@ -1230,7 +1304,7 @@ class PlayState extends MusicBeatState
 		else
 		{
 			// Conductor.songPosition = FlxG.sound.music.time;
-			Conductor.songPosition += FlxG.elapsed * 1000;
+			Conductor.songPosition += (FlxG.elapsed * 1000) * songMultiplier;
 
 			if (!paused)
 			{
@@ -1354,7 +1428,7 @@ class PlayState extends MusicBeatState
 
 		if (unspawnNotes[0] != null)
 		{
-			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < (1500))
+			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < (3500 * songMultiplier))
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				notes.add(dunceNote);
@@ -1621,6 +1695,12 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
 
+		if (SONG.validScore)
+		{
+			if(!usedPractice && songMultiplier >= 1)
+				Highscore.saveScore(SONG.song, songScore, storyDifficulty);
+		}
+
 		if (isStoryMode)
 		{
 			campaignScore += songScore;
@@ -1639,7 +1719,10 @@ class PlayState extends MusicBeatState
 				StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
 
 				if (SONG.validScore)
-					Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
+				{
+					if(!usedPractice && songMultiplier >= 1)
+						Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
+				}
 
 				FlxG.save.data.weekUnlocked = StoryMenuState.weekUnlocked;
 				FlxG.save.flush();
@@ -1714,7 +1797,7 @@ class PlayState extends MusicBeatState
 		var funnyAccMult:Float = 1;
 		var daRating:String = "marvelous";
 
-		var noteMs:Float = Conductor.songPosition - strumtime;
+		var noteMs:Float = (Conductor.songPosition - strumtime) / songMultiplier;
 
 		if(Math.abs(noteMs) > judgementTimings[0])
 		{
@@ -1742,7 +1825,7 @@ class PlayState extends MusicBeatState
 			daRating = "shit";
 			funnyAccMult = 0.1;
 			score = 50;
-			health -= 0.175;
+			if(Options.getData('anti-mash')) health -= 0.175;
 		}
 
 		switch(daRating)
@@ -1999,10 +2082,7 @@ class PlayState extends MusicBeatState
 					{
 						if(heldArray[daNote.noteData] && daNote.isSustainNote && daNote.mustPress)
 						{
-							// goodness this if statement is shit lmfao
-							if(((daNote.strumTime <= Conductor.songPosition && daNote.shouldHit) || 
-								(!daNote.shouldHit && (daNote.strumTime > (Conductor.songPosition - (Conductor.safeZoneOffset * 0.4))
-								&& daNote.strumTime < (Conductor.songPosition + Conductor.safeZoneOffset * 0.2)))))
+							if(daNote.canBeHit && daNote.mustPress && daNote.isSustainNote)
 							{
 								for(char in boyfriend.members)
 								{
@@ -2207,10 +2287,16 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > 20
-			|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > 20))
+
+		var gamerValue = 20 * songMultiplier;
+
+		if(FlxG.sound.music != null)
 		{
-			resyncVocals();
+			if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > gamerValue
+				|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > gamerValue))
+			{
+				resyncVocals();
+			}
 		}
 
 		if(curStep == lastStepHit) {
@@ -2235,7 +2321,7 @@ class PlayState extends MusicBeatState
 		{
 			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
 			{
-				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
+				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm, songMultiplier);
 				FlxG.log.add('CHANGED BPM!');
 			}
 			// else

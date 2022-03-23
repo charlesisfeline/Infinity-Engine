@@ -1,5 +1,6 @@
 package ui;
 
+import flixel.util.FlxColor;
 import options.OptionsHandler;
 import util.CoolUtil;
 import flixel.FlxG;
@@ -112,6 +113,9 @@ class Alphabet extends FlxSpriteGroup
 			finishedText = true;
 		}
 		x = lastX;
+
+		if(!isBold)
+			color = FlxColor.BLACK;
 	}
 
 	public function addText()
@@ -189,6 +193,9 @@ class Alphabet extends FlxSpriteGroup
 
 			// loopNum += 1;
 		}
+
+		if(!isBold)
+			color = FlxColor.BLACK;
 	}
 
 	function doSplitWords():Void
@@ -343,6 +350,9 @@ class Alphabet extends FlxSpriteGroup
 			}
 			finishedText = true;
 		}
+
+		if(!isBold)
+			color = FlxColor.BLACK;
 	}
 
 	override function update(elapsed:Float)

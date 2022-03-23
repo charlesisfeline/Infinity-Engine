@@ -80,7 +80,7 @@ class ChartingState extends MusicBeatState
 	**/
 	var curSelectedNote:Array<Dynamic>;
 
-	var tempBpm:Int = 0;
+	var tempBpm:Float = 0;
 
 	var vocals:FlxSound;
 
@@ -131,7 +131,8 @@ class ChartingState extends MusicBeatState
 				ui_Skin: "default",
 				keyCount: 4,
 				stage: 'stage',
-				gf: 'gf'
+				gf: 'gf',
+				timescale: [4, 4]
 			};
 		}
 
@@ -496,7 +497,7 @@ class ChartingState extends MusicBeatState
 	}*/
 	function sectionStartTime():Float
 	{
-		var daBPM:Int = _song.bpm;
+		var daBPM:Float = _song.bpm;
 		var daPos:Float = 0;
 		for (i in 0...curSection)
 		{
@@ -871,7 +872,7 @@ class ChartingState extends MusicBeatState
 		else
 		{
 			// get last bpm
-			var daBPM:Int = _song.bpm;
+			var daBPM:Float = _song.bpm;
 			for (i in 0...curSection)
 				if (_song.notes[i].changeBPM)
 					daBPM = _song.notes[i].bpm;
@@ -925,7 +926,9 @@ class ChartingState extends MusicBeatState
 			mustHitSection: true,
 			sectionNotes: [],
 			typeOfSection: 0,
-			altAnim: false
+			altAnim: false,
+			timeScale: [4, 4],
+			changeTimeScale: false
 		};
 
 		_song.notes.push(sec);

@@ -1,5 +1,6 @@
 package states;
 
+import util.CoolUtil;
 import util.Cache;
 import game.Song;
 import game.Highscore;
@@ -324,6 +325,8 @@ class StoryMenuState extends MusicBeatState
 				case 2:
 					diffic = '-hard';
 			}
+
+			CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
 			PlayState.storyDifficulty = curDifficulty;
 
