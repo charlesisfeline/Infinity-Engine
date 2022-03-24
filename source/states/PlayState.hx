@@ -240,6 +240,9 @@ class PlayState extends MusicBeatState
 		persistentUpdate = true;
 		persistentDraw = true;
 
+		if(Options.getData('botplay'))
+			usedPractice = true;
+
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
 
@@ -1729,13 +1732,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				var difficulty:String = "";
-
-				if (storyDifficulty == 0)
-					difficulty = '-easy';
-
-				if (storyDifficulty == 2)
-					difficulty = '-hard';
+				var difficulty:String = CoolUtil.getDifficultyFilePath();
 
 				trace('LOADING NEXT SONG');
 				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);

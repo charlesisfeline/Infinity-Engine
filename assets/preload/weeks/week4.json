@@ -1,25 +1,14 @@
 {
     "songs": [
-        {
-            "displayName": "Satin Panties",
-            "song": "Satin Panties",
-            "icon": "mom",
-            "color": "d8558e",
-            "difficulties": ["easy", "normal", "hard"]
-        },
-        {
-            "displayName": "High",
-            "song": "High",
-            "icon": "mom",
-            "color": "d8558e",
-            "difficulties": ["easy", "normal", "hard"]
-        },
-        {
-            "displayName": "M.I.L.F",
-            "song": "M.I.L.F",
-            "icon": "mom",
-            "color": "d8558e",
-            "difficulties": ["easy", "normal", "hard"]
-        }
-    ]
+        "Satin Panties",
+        "High",
+        "M.I.L.F"
+    ],
+    "difficulties": ["easy", "normal", "hard"],
+    "characters": ["mom", "gf", "bf"],
+    "description": "MOMMY MUST MURDER",
+    "texture": "week4",
+    "background_image": "",
+    "background_color": "d8558e",
+    "locked_before": ""
 }

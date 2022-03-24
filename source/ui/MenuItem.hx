@@ -7,17 +7,32 @@ import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 
+typedef WeekData = {
+	var songs:Array<String>;
+	var difficulties:Array<String>;
+	var characters:Array<String>;
+	var description:String;
+	var texture:String;
+	var background_image:String;
+	var background_color:String;
+	var locked_before:String;
+}
+
 class MenuItem extends FlxSpriteGroup
 {
+	public var json:WeekData;
+
 	public var targetY:Float = 0;
 	public var week:FlxSprite;
 	public var flashingInt:Int = 0;
 
-	public function new(x:Float, y:Float, weekNum:Int = 0)
+	public function new(x:Float, y:Float, ?weekStr:String = "tutorial")
 	{
 		super(x, y);
-		week = new FlxSprite().loadGraphic(Paths.image('storymenu/week' + weekNum));
+		week = new FlxSprite().loadGraphic(Paths.image('storymenu/$weekStr'));
 		add(week);
+
+		json = Paths.parseJson('weeks/$weekStr');
 	}
 
 	private var isFlashing:Bool = false;

@@ -1,11 +1,12 @@
 {
     "songs": [
-        {
-            "displayName": "Tutorial",
-            "song": "Tutorial",
-            "icon": "gf",
-            "color": "a5004d",
-            "difficulties": ["easy", "normal", "hard"]
-        }
-    ]
+        "Tutorial"
+    ],
+    "difficulties": ["easy", "normal", "hard"],
+    "characters": ["", "gf", "bf"],
+    "description": "HOW TO FUNK",
+    "texture": "tutorial",
+    "background_image": "",
+    "background_color": "a5004d",
+    "locked_before": ""
 }

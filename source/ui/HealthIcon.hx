@@ -7,6 +7,8 @@ import options.OptionsHandler;
 
 using StringTools;
 
+// REMEMEBR TO MAKE ANIMATED ICONS REAL AND ALSO MAKE STORY MODE UNHARDCODED! 
+
 class HealthIcon extends FlxSprite
 {
 	/**

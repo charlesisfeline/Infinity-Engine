@@ -1,5 +1,7 @@
 package states;
 
+import mods.Mods;
+import options.OptionsHandler;
 import util.CoolUtil;
 import util.Cache;
 import game.Song;
@@ -60,6 +62,9 @@ class StoryMenuState extends MusicBeatState
 		"RED SNOW",
 		"hating simulator ft. moawling"
 	];
+
+	var jsonDirs:Array<String> = [];
+	var jsons:Array<String> = [];
 
 	var txtWeekTitle:FlxText;
 
@@ -126,15 +131,47 @@ class StoryMenuState extends MusicBeatState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
-		for (i in 0...weekData.length)
+		#if sys
+		jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
+		#else
+		jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
+		#end
+		
+        #if (MODS_ALLOWED && sys)
+        if(Mods.activeMods.length > 0)
+        {
+            for(mod in Mods.activeMods)
+            {
+                if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
+                {
+                    var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks/');
+                    
+                    for(jsonThingy in funnyArray)
+                    {
+                        jsonDirs.push(jsonThingy);
+                    }
+                }
+            }
+        }
+        #end
+
+        for(dir in jsonDirs)
+        {
+            if(dir.endsWith(".json"))
+                jsons.push(dir.split(".json")[0]);
+        }
+
+		for (i in 0...jsons.length)
 		{
-			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i);
+			var json:WeekData = Paths.parseJson('weeks/' + jsons[i]);
+			
+			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, json.texture);
 			weekThing.y += ((weekThing.height + 20) * i);
 			weekThing.targetY = i;
 			grpWeekText.add(weekThing);
 
 			weekThing.screenCenter(X);
-			weekThing.antialiasing = true;
+			weekThing.antialiasing = Options.getData('anti-aliasing');
 			// weekThing.updateHitbox();
 
 			// Needs an offset thingie
@@ -145,7 +182,7 @@ class StoryMenuState extends MusicBeatState
 				lock.animation.addByPrefix('lock', 'lock');
 				lock.animation.play('lock');
 				lock.ID = i;
-				lock.antialiasing = true;
+				lock.antialiasing = Options.getData('anti-aliasing');
 				grpLocks.add(lock);
 			}
 		}
@@ -156,7 +193,7 @@ class StoryMenuState extends MusicBeatState
 		{
 			var weekCharacterThing:MenuCharacter = new MenuCharacter((FlxG.width * 0.25) * (1 + char) - 150, weekCharacters[curWeek][char]);
 			weekCharacterThing.y += 70;
-			weekCharacterThing.antialiasing = true;
+			weekCharacterThing.antialiasing = Options.getData('anti-aliasing');
 			switch (weekCharacterThing.character)
 			{
 				case 'dad':
@@ -178,6 +215,21 @@ class StoryMenuState extends MusicBeatState
 			}
 
 			grpWeekCharacters.add(weekCharacterThing);
+		}
+
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
+
+		if(grpWeekText.members[curWeek].json.difficulties != null && grpWeekText.members[curWeek].json.difficulties.length > 0)
+		{
+			// go through all difficulties and add them to the list
+			var diffs:Array<String> = [];
+
+			for(diff in grpWeekText.members[curWeek].json.difficulties)
+			{
+				diffs.push(diff);
+			}
+
+			CoolUtil.difficulties = diffs;
 		}
 
 		difficultySelectors = new FlxGroup();
@@ -312,27 +364,33 @@ class StoryMenuState extends MusicBeatState
 				stopspamming = true;
 			}
 
-			PlayState.storyPlaylist = weekData[curWeek];
+			PlayState.storyPlaylist = grpWeekText.members[curWeek].json.songs;
 			PlayState.isStoryMode = true;
 			selectedWeek = true;
 
-			var diffic = "";
-
-			switch (curDifficulty)
-			{
-				case 0:
-					diffic = '-easy';
-				case 2:
-					diffic = '-hard';
-			}
-
 			CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
+			if(grpWeekText.members[curWeek].json.difficulties != null && grpWeekText.members[curWeek].json.difficulties.length > 0)
+			{
+				// go through all difficulties and add them to the list
+				var diffs:Array<String> = [];
+
+				for(diff in grpWeekText.members[curWeek].json.difficulties)
+				{
+					diffs.push(diff);
+				}
+
+				CoolUtil.difficulties = diffs;
+			}
+
 			PlayState.storyDifficulty = curDifficulty;
+
+			var diffic = CoolUtil.getDifficultyFilePath();
 
 			PlayState.SONG = Song.loadFromJson(Paths.formatToSongPath(PlayState.storyPlaylist[0].toLowerCase()) + diffic, Paths.formatToSongPath(PlayState.storyPlaylist[0].toLowerCase()));
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
+
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				LoadingState.loadAndSwitchState(new PlayState(), true);
@@ -384,10 +442,10 @@ class StoryMenuState extends MusicBeatState
 	{
 		curWeek += change;
 
-		if (curWeek >= weekData.length)
+		if (curWeek >= jsons.length)
 			curWeek = 0;
 		if (curWeek < 0)
-			curWeek = weekData.length - 1;
+			curWeek = jsons.length - 1;
 
 		var bullShit:Int = 0;
 
