@@ -9,15 +9,25 @@ class Mods
 
     public static var activeMods:Array<String> = [];
 
+    public static var alreadyPushedVanilla:Bool = false;
+
     public static function init()
     {
         // loads funny mods from save data
         if(Options.getData("mods") == null)
-            Options.setData("mods", []);
+        {
+            Options.setData("mods", [["Vanilla FNF", true]]);
+        }
         
         mods = [];
 
         mods = Options.getData("mods");
+
+        /*if(!alreadyPushedVanilla)
+        {
+            mods.push(["Vanilla FNF", true]);
+            alreadyPushedVanilla = true;
+        }*/
 
         updateActiveMods();
 
@@ -30,7 +40,7 @@ class Mods
 
     public static function getAllMods()
     {
-        #if sys
+        #if (MODS_ALLOWED && sys)
         var modDirStuffs = sys.FileSystem.readDirectory(Sys.getCwd() + "mods/");
 
         //trace(modDirStuffs);
@@ -76,8 +86,11 @@ class Mods
                             //trace("MEGA FUNNIES: " + mod[0]);
                             //trace("SWAG FUNNIES: " + swagModPath);
 
-                            if(!sys.FileSystem.exists(swagModPath + "_mod_info.json"))
-                                mods.remove(mod);
+                            if(mod[0] != "Vanilla FNF")
+                            {
+                                if(!sys.FileSystem.exists(swagModPath + "_mod_info.json"))
+                                    mods.remove(mod);
+                            } 
                         }
                     }
                 }

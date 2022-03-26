@@ -34,14 +34,10 @@ class HealthIcon extends FlxSprite
 		var modsExists = false;
 
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/images/icons/$char.png'))
-					modsExists = true;
-			}
-		}
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/images/icons/$char.png'))
+			modsExists = true;
 		#end
 
 		if(!assetsExists && !modsExists)

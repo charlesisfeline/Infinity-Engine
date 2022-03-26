@@ -31,8 +31,16 @@ class ModsState extends MusicBeatState
 
     var noMods:Bool = false;
 
+    var modsList:Array<Array<Dynamic>> = [];
+
     override public function create()
     {
+        for(mod in Mods.mods)
+        {
+            if(mod[0] != "Vanilla FNF")
+                modsList.push(mod);
+        }
+
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 
@@ -51,7 +59,7 @@ class ModsState extends MusicBeatState
 
         Mods.getAllMods();
         
-        if(Mods.mods.length < 1)
+        if(modsList.length < 1)
         {
             noMods = true;
 
@@ -65,9 +73,9 @@ class ModsState extends MusicBeatState
             add(oopsText);
         }
         
-        for(modIndex in 0...Mods.mods.length)
+        for(modIndex in 0...modsList.length)
         {
-            var mod = Mods.mods[modIndex];
+            var mod = modsList[modIndex];
 
             var funnyGroup = new ModGroup(0, 100 + (250 * modIndex), mod);
             funnyGroup.screenCenter(X);
@@ -112,9 +120,9 @@ class ModsState extends MusicBeatState
                 curSelected += 1;
 
             if(curSelected < 0)
-                curSelected = Mods.mods.length - 1;
+                curSelected = modsList.length - 1;
 
-            if(curSelected > Mods.mods.length - 1)
+            if(curSelected > modsList.length - 1)
                 curSelected = 0;
 
             updateMods();
@@ -124,7 +132,7 @@ class ModsState extends MusicBeatState
 
         if(accept)
         {
-            var modName = Mods.mods[curSelected][0];
+            var modName = modsList[curSelected][0];
             Mods.setModActive(modName, !Mods.getModActive(modName));
 
             updateMods();
@@ -152,9 +160,9 @@ class ModsState extends MusicBeatState
                 mod.alpha = 0.6;
         }
 
-        for(selected in 0...Mods.mods.length)
+        for(selected in 0...modsList.length)
         {
-            var modName = Mods.mods[selected][0];
+            var modName = modsList[selected][0];
 
             modGroup.members[selected].funnyIndicator.text = Mods.getModActive(modName) == false ? "[ OFF ]" : "[ ON  ]";
             modGroup.members[selected].funnyIndicator.color = Mods.getModActive(modName) == false ? FlxColor.RED : FlxColor.LIME;

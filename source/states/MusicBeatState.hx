@@ -1,5 +1,6 @@
 package states;
 
+import mods.Mods;
 import game.PlayerSettings;
 import controls.Controls;
 import game.Conductor.BPMChangeEvent;
@@ -27,6 +28,7 @@ class MusicBeatState extends FlxUIState
 	{
 		super();
 
+		Mods.init();
 		Cache.clearCache();
 
 		transIn = FlxTransitionableState.defaultTransIn;

@@ -861,16 +861,12 @@ class CharacterEditor extends MusicBeatState
     function loadFrames(char:String)
     {
         #if (MODS_ALLOWED && sys)
-        for(mod in Mods.activeMods)
+        var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$char/assets.png') && sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$char/assets.xml'))
         {
-            if(Mods.activeMods.length > 0)
-            {
-                if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$char/assets.png') && sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$char/assets.xml'))
-                {
-                    character.frames = Paths.getSparrowAtlas('characters/$char/assets', true);
-                    return;
-                }
-            }
+            character.frames = Paths.getSparrowAtlas('characters/$char/assets', true);
+            return;
         }
         #end
 

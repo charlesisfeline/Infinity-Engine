@@ -1149,11 +1149,13 @@ class PlayState extends MusicBeatState
 
 	function resyncVocals():Void
 	{
+		FlxG.sound.music.pause();
 		vocals.pause();
 
-		FlxG.sound.music.play();
-		Conductor.songPosition = FlxG.sound.music.time;
+		FlxG.sound.music.time = Conductor.songPosition;
 		vocals.time = Conductor.songPosition;
+		
+		FlxG.sound.music.play();
 		vocals.play();
 
 		#if cpp

@@ -111,7 +111,7 @@ class TitleState extends MusicBeatState
 
 		PlayerSettings.init();
 		Options.init();
-		Mods.init();
+		//Mods.init();
 		UISkinList.init();
 
 		CoolUtil.updateFramerate();

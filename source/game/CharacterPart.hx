@@ -93,14 +93,10 @@ class CharacterPart extends FlxSprite
 					var modsPackerExists = false;
 			
 					#if (MODS_ALLOWED && sys)
-					for(mod in Mods.activeMods)
-					{
-						if(Mods.activeMods.length > 0)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$debugCharacter/assets.txt'))
-								modsPackerExists = true;
-						}
-					}
+					var mod = Paths.currentMod;
+
+					if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$debugCharacter/assets.txt'))
+						modsPackerExists = true;
 					#end
 
 					if(assetsPackerExists || modsPackerExists)
@@ -114,14 +110,10 @@ class CharacterPart extends FlxSprite
 					var modsPackerExists = false;
 
 					#if (MODS_ALLOWED && sys)
-					for(mod in Mods.activeMods)
-					{
-						if(Mods.activeMods.length > 0)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$curCharacter/assets.txt'))
-								modsPackerExists = true;
-						}
-					}
+					var mod = Paths.currentMod;
+
+					if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters/$curCharacter/assets.txt'))
+						modsPackerExists = true;
 					#end
 
 					if(assetsPackerExists || modsPackerExists)

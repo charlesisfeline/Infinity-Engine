@@ -251,17 +251,16 @@ class ChartingState extends MusicBeatState
 		}
 
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters'))
-			{
-				var funnyShit:Array<String> = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/characters/');
+		var mod = Paths.currentMod;
 
-				for(char in funnyShit)
-				{
-					if(!char.contains('.'))
-						characters.push(char);
-				}
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/characters'))
+		{
+			var funnyShit:Array<String> = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/characters/');
+
+			for(char in funnyShit)
+			{
+				if(!char.contains('.'))
+					characters.push(char);
 			}
 		}
 		#end

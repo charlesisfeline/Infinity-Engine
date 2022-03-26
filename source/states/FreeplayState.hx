@@ -1,5 +1,6 @@
 package states;
 
+import openfl.display.BitmapData;
 import util.Cache;
 import game.Song;
 import game.Highscore;
@@ -77,6 +78,14 @@ class FreeplayState extends MusicBeatState
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		add(bg);
 
+		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
+		scoreText.setFormat(Paths.font("vcr"), 32, FlxColor.WHITE, CENTER);
+		scoreText.alignment = CENTER;
+
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
+		scoreBG.alpha = 0.6;
+		add(scoreBG);
+
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
 
@@ -84,10 +93,7 @@ class FreeplayState extends MusicBeatState
 		add(grpIcons);
 
 		loadSongs();
-
-		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		scoreText.setFormat(Paths.font("vcr"), 32, FlxColor.WHITE, CENTER);
-		scoreText.alignment = CENTER;
+		//trace('load songs');
 
 		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
 		scoreBG.alpha = 0.6;
@@ -124,6 +130,105 @@ class FreeplayState extends MusicBeatState
 		changeDiff();
 		
 		positionScore();
+
+		currentModText = new FlxText(FlxG.width, 5, 0, "among us?", 24);
+		currentModText.setFormat(Paths.font("vcr"), 24, FlxColor.WHITE, RIGHT);
+		currentModText.alignment = RIGHT;
+
+		currentModBG = new FlxSprite(currentModText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
+		currentModBG.alpha = 0.6;
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon = new FlxSprite().loadGraphic(bitmapData);
+		}
+		else
+		{
+			currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		add(currentModBG);
+		add(currentModText);
+		add(currentModIcon);
+
+		positionCurrentMod();
+
+		var switchWarn:FlxText = new FlxText(0, currentModBG.y - (currentModBG.height + 6), 0, "[CTRL + LEFT/RIGHT to switch mods]");
+		switchWarn.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
+		switchWarn.borderSize = 2;
+		add(switchWarn);
+
+		switchWarn.x = FlxG.width - (switchWarn.width + 8);
+	}
+	
+	// CURRENT MOD SHIT
+	var currentModBG:FlxSprite;
+	var currentModText:FlxText;
+
+	var currentModIcon:FlxSprite;
+
+	function positionCurrentMod()
+	{
+		currentModText.text = Paths.currentMod;
+		currentModText.setPosition(FlxG.width - (currentModText.width + 6), FlxG.height - (currentModText.height + 6));
+
+		currentModBG.makeGraphic(Math.floor(currentModText.width + 8), Math.floor(currentModText.height + 8), 0xFF000000);
+		currentModBG.setPosition(FlxG.width - currentModBG.width, FlxG.height - currentModBG.height);
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon.loadGraphic(bitmapData);
+		}
+		else
+		{
+			currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		currentModIcon.setGraphicSize(Math.floor(currentModBG.height));
+		currentModIcon.updateHitbox();
+
+		currentModIcon.setPosition(currentModBG.x - (currentModIcon.width), currentModBG.y);
+	}
+
+	function changeMod(?change:Int = 0)
+	{
+		var index:Int = Mods.activeMods.indexOf(Paths.currentMod);
+
+		index += change;
+
+		if(index < 0)
+			index = Mods.activeMods.length - 1;
+
+		if(index > Mods.activeMods.length - 1)
+			index = 0;
+
+		Paths.currentMod = Mods.activeMods[index];
+
+		bg.loadGraphic(Paths.image('menuDesat'));
+
+		positionCurrentMod();
+		loadSongs();
+
+		curSelected = 0;
+		changeSelection();
 	}
 
 	public function addSong(displayName:String, weekNum:Null<Int>, songName:String, songCharacter:String, color:String, difficulties:Array<String>)
@@ -150,73 +255,26 @@ class FreeplayState extends MusicBeatState
 		grpSongs.clear();
 		grpIcons.clear();
 
-		/*#if sys
-		weekJsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
-		#else
-		weekJsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
-		#end
-		
-		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		if(Paths.currentMod == "Vanilla FNF")
 		{
-			if(Mods.activeMods.length > 0)
+			var freeplaySongs:Array<FreeplaySong> = Json.parse(Assets.getText('assets/data/freeplaySongList.json')).songs;
+
+			for(song in freeplaySongs)
 			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
-				{
-					var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks');
-					
-					for(jsonThingy in funnyArray)
-					{
-						weekJsonDirs.push(jsonThingy);
-					}
-				}
+				addSong(song.displayName, null, song.song, song.icon, song.color, song.difficulties);
 			}
-		}
-		#end
-
-		for(dir in weekJsonDirs)
-		{
-			if(dir.endsWith(".json"))
-				weekJsons.push(dir.split(".json")[0]);
-		}
-
-		trace("ADDED WEEKS TO LIST");
-
-		for(i in 0...weekJsons.length)
-		{
-			var week = weekJsons[i];
-
-			var json:Dynamic = Paths.parseJson('weeks/$week');
-
-			var jsonSongs:Array<FreeplaySong> = json.songs;
-
-			for(song in jsonSongs)
-			{
-				addSong(song.displayName, i, song.song, song.icon, song.color, song.difficulties);
-			}
-		}*/
-
-		var freeplaySongs:Array<FreeplaySong> = Json.parse(Assets.getText('assets/data/freeplaySongList.json')).songs;
-
-		for(song in freeplaySongs)
-		{
-			addSong(song.displayName, null, song.song, song.icon, song.color, song.difficulties);
 		}
 
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/data/freeplaySongList.json'))
-				{
-					var modFreeplaySongs:Array<FreeplaySong> = Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/data/freeplaySongList.json')).songs;
+		var mod = Paths.currentMod;
 
-					for(song in modFreeplaySongs)
-					{
-						addSong(song.displayName, null, song.song, song.icon, song.color, song.difficulties);
-					}
-				}
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/data/freeplaySongList.json'))
+		{
+			var modFreeplaySongs:Array<FreeplaySong> = Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/data/freeplaySongList.json')).songs;
+
+			for(song in modFreeplaySongs)
+			{
+				addSong(song.displayName, null, song.song, song.icon, song.color, song.difficulties);
 			}
 		}
 		#end
@@ -297,6 +355,8 @@ class FreeplayState extends MusicBeatState
 		var downP = controls.UI_DOWN_P;
 		var space = FlxG.keys.justPressed.SPACE;
 
+		var ctrl = FlxG.keys.pressed.CONTROL;
+
 		var accepted = controls.ACCEPT;
 
 		if(-1 * Math.floor(FlxG.mouse.wheel) != 0 && !shift)
@@ -326,35 +386,45 @@ class FreeplayState extends MusicBeatState
 			changeSelection(1);
 		}
 
-		if(leftP && !shift)
-			changeDiff(-1);
-		if(rightP && !shift)
-			changeDiff(1);
-		if((left || right) && shift) {
-			var daMultiplier:Float = left ? -0.05 : 0.05;
+		if(!ctrl)
+		{
+			if(leftP && !shift)
+				changeDiff(-1);
+			if(rightP && !shift)
+				changeDiff(1);
+			if((left || right) && shift) {
+				var daMultiplier:Float = left ? -0.05 : 0.05;
 
-			holdTime += elapsed;
+				holdTime += elapsed;
 
-			if(holdTime > 0.5 || leftP || rightP)
-			{
-				curSpeed += daMultiplier;
-	
-				if(curSpeed < 0.25)
-					curSpeed = 0.25;
-
-				#if cpp
-				@:privateAccess
+				if(holdTime > 0.5 || leftP || rightP)
 				{
-					if(FlxG.sound.music.active && FlxG.sound.music.playing)
-						lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+					curSpeed += daMultiplier;
 		
-					if (vocals.active && vocals.playing)
-						lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+					if(curSpeed < 0.25)
+						curSpeed = 0.25;
+
+					#if cpp
+					@:privateAccess
+					{
+						if(FlxG.sound.music.active && FlxG.sound.music.playing)
+							lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+			
+						if (vocals.active && vocals.playing)
+							lime.media.openal.AL.sourcef(vocals._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, curSpeed);
+					}
+					#end
 				}
-				#end
+			} else {
+				holdTime = 0;
 			}
-		} else {
-			holdTime = 0;
+		}
+		else
+		{
+			if(leftP && !shift)
+				changeMod(-1);
+			if(rightP && !shift)
+				changeMod(1);
 		}
 
 		if(shift && FlxG.keys.justPressed.R)
@@ -423,7 +493,7 @@ class FreeplayState extends MusicBeatState
 		{
 			var poop:String = Highscore.formatSong(songName, curDifficulty);
 
-			trace(poop);
+			//trace(poop);
 
 			PlayState.SONG = Song.loadFromJson(poop, songName);
 			PlayState.isStoryMode = false;

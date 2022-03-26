@@ -18,6 +18,8 @@ class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 
+	public static var currentMod = "Vanilla FNF";
+
 	static var currentLevel:String;
 
 	static public function setCurrentLevel(name:String)
@@ -62,15 +64,11 @@ class Paths
 	static public function file(file:String, type:AssetType = TEXT, ?library:String)
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$file'))
 		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$file'))
-				{
-					return Sys.getCwd() + 'mods/$mod/$file';
-				}
-			}
+			return Sys.getCwd() + 'mods/$mod/$file';
 		}
 		#end
 
@@ -80,15 +78,11 @@ class Paths
  	static public function txt(key:String, ?library:String)
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.txt'))
 		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.txt'))
-				{
-					return Sys.getCwd() + 'mods/$mod/$key.txt';
-				}
-			}
+			return Sys.getCwd() + 'mods/$mod/$key.txt';
 		}
 		#end
 
@@ -103,14 +97,10 @@ class Paths
 	static public function json(key:String, ?library:String)
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
-					return Sys.getCwd() + 'mods/$mod/$key.json';
-			}
-		}
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
+			return Sys.getCwd() + 'mods/$mod/$key.json';
 		#end
 
 		return getPath('$key.json', TEXT, library);
@@ -129,43 +119,38 @@ class Paths
 	static public function sound(key:String, ?library:String, ?customPath:Bool = false):Dynamic
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		var mod = Paths.currentMod;
+
+		var basePath = "";
+
+		if(!customPath)
+			basePath = "sounds/";
+		else
+			basePath = "";
+
+		var fullPath = basePath + key + SOUND_EXT;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
 		{
-			if(Mods.activeMods.length > 0)
+			if(Cache.getFromCache(fullPath, "sound") == null)
 			{
-				var basePath = "";
+				var sound:Sound = null;
 
-				if(!customPath)
-					basePath = "sounds/";
-				else
-					basePath = "";
+				var modFoundFirst:String = "";
+		
+				var mod = Paths.currentMod;
 
-				var fullPath = basePath + key + SOUND_EXT;
-
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
+					modFoundFirst = mod;
+		
+				if(modFoundFirst != "")
 				{
-					if(Cache.getFromCache(fullPath, "sound") == null)
-					{
-						var sound:Sound = null;
-		
-						var modFoundFirst:String = "";
-				
-						for(mod in Mods.activeMods)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
-								modFoundFirst = mod;
-						}
-				
-						if(modFoundFirst != "")
-						{
-							sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
-							Cache.addToCache(fullPath, sound, "sound");
-						}
-					}
-		
-					return Cache.getFromCache(fullPath, "sound");
+					sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
+					Cache.addToCache(fullPath, sound, "sound");
 				}
 			}
+
+			return Cache.getFromCache(fullPath, "sound");
 		}
 		#end
 
@@ -180,43 +165,38 @@ class Paths
 	static public function music(key:String, ?library:String, ?customPath:Bool = false):Dynamic
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
+		var mod = Paths.currentMod;
+
+		var basePath = "";
+
+		if(!customPath)
+			basePath = "music/";
+		else
+			basePath = "";
+
+		var fullPath = basePath + key + SOUND_EXT;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
 		{
-			if(Mods.activeMods.length > 0)
+			if(Cache.getFromCache(fullPath, "music") == null)
 			{
-				var basePath = "";
+				var sound:Sound = null;
 
-				if(!customPath)
-					basePath = "music/";
-				else
-					basePath = "";
+				var modFoundFirst:String = "";
+		
+				var mod = Paths.currentMod;
 
-				var fullPath = basePath + key + SOUND_EXT;
-
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
+					modFoundFirst = mod;
+		
+				if(modFoundFirst != "")
 				{
-					if(Cache.getFromCache(fullPath, "music") == null)
-					{
-						var sound:Sound = null;
-		
-						var modFoundFirst:String = "";
-				
-						for(mod in Mods.activeMods)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
-								modFoundFirst = mod;
-						}
-				
-						if(modFoundFirst != "")
-						{
-							sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
-							Cache.addToCache(fullPath, sound, "music");
-						}
-					}
-		
-					return Cache.getFromCache(fullPath, "music");
+					sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
+					Cache.addToCache(fullPath, sound, "music");
 				}
 			}
+
+			return Cache.getFromCache(fullPath, "music");
 		}
 		#end
 
@@ -229,37 +209,32 @@ class Paths
 	static public function voices(song:String):Dynamic
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				var basePath = 'songs/';
-				var fullPath = basePath + ${song.toLowerCase()} + '/Voices.' + SOUND_EXT;
+		var mod = Paths.currentMod;
 
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+		var basePath = 'songs/';
+		var fullPath = basePath + ${song.toLowerCase()} + '/Voices.' + SOUND_EXT;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+		{
+			if(Cache.getFromCache(fullPath, "song") == null)
+			{
+				var sound:Sound = null;
+
+				var modFoundFirst:String = "";
+		
+				var mod = Paths.currentMod;
+
+				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
+					modFoundFirst = mod;
+		
+				if(modFoundFirst != "")
 				{
-					if(Cache.getFromCache(fullPath, "song") == null)
-					{
-						var sound:Sound = null;
-		
-						var modFoundFirst:String = "";
-				
-						for(mod in Mods.activeMods)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
-								modFoundFirst = mod;
-						}
-				
-						if(modFoundFirst != "")
-						{
-							sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
-							Cache.addToCache(fullPath, sound, "song");
-						}
-					}
-		
-					return Cache.getFromCache(fullPath, "song");
+					sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
+					Cache.addToCache(fullPath, sound, "song");
 				}
 			}
+
+			return Cache.getFromCache(fullPath, "song");
 		}
 		#end
 
@@ -269,37 +244,33 @@ class Paths
 	static public function inst(song:String):Dynamic
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				var basePath = 'songs/';
-				var fullPath = basePath + ${song.toLowerCase()} + '/Inst.' + SOUND_EXT;
+		var mod = Paths.currentMod;
 
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+		var basePath = 'songs/';
+		var fullPath = basePath + ${song.toLowerCase()} + '/Inst.' + SOUND_EXT;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$fullPath'))
+		{
+			if(Cache.getFromCache(fullPath, "song") == null)
+			{
+				var sound:Sound = null;
+
+				var modFoundFirst:String = "";
+		
+				for(mod in Mods.activeMods)
 				{
-					if(Cache.getFromCache(fullPath, "song") == null)
-					{
-						var sound:Sound = null;
+					if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
+						modFoundFirst = mod;
+				}
 		
-						var modFoundFirst:String = "";
-				
-						for(mod in Mods.activeMods)
-						{
-							if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/' + fullPath))
-								modFoundFirst = mod;
-						}
-				
-						if(modFoundFirst != "")
-						{
-							sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
-							Cache.addToCache(fullPath, sound, "song");
-						}
-					}
-		
-					return Cache.getFromCache(fullPath, "song");
+				if(modFoundFirst != "")
+				{
+					sound = Sound.fromFile('mods/$modFoundFirst/' + fullPath);
+					Cache.addToCache(fullPath, sound, "song");
 				}
 			}
+
+			return Cache.getFromCache(fullPath, "song");
 		}
 		#end
 
@@ -309,30 +280,26 @@ class Paths
 	static public function image(key:String, ?library:String, ?customPath:Bool = false):Dynamic
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				var modPng = key;
-		
-				if (!customPath)
-					modPng = "mods/" + mod + "/images/" + modPng;
-				else
-					modPng = "mods/" + mod + "/" + modPng;
+		var mod = Paths.currentMod;
 
-				if(sys.FileSystem.exists(Sys.getCwd() + modPng + ".png"))
-				{
-					if(Cache.getFromCache(modPng, "image") == null)
-					{
-						var graphic = FlxGraphic.fromBitmapData(BitmapData.fromFile(Sys.getCwd() + modPng + ".png"), false, modPng, false);
-						graphic.destroyOnNoUse = false;
-	
-						Cache.addToCache(modPng, graphic, "image");
-					}
-					
-					return Cache.getFromCache(modPng, "image");
-				}
+		var modPng = key;
+
+		if (!customPath)
+			modPng = "mods/" + mod + "/images/" + modPng;
+		else
+			modPng = "mods/" + mod + "/" + modPng;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + modPng + ".png"))
+		{
+			if(Cache.getFromCache(modPng, "image") == null)
+			{
+				var graphic = FlxGraphic.fromBitmapData(BitmapData.fromFile(Sys.getCwd() + modPng + ".png"), false, modPng, false);
+				graphic.destroyOnNoUse = false;
+
+				Cache.addToCache(modPng, graphic, "image");
 			}
+			
+			return Cache.getFromCache(modPng, "image");
 		}
 		#end
 
@@ -345,17 +312,13 @@ class Paths
 	static public function font(key:String)
 	{
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/fonts/$key.ttf'))
-					return Sys.getCwd() + 'mods/$mod/fonts/$key.ttf';
+		var mod = Paths.currentMod;
 
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/fonts/$key.otf'))
-					return Sys.getCwd() + 'mods/$mod/fonts/$key.otf';
-			}
-		}
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/fonts/$key.ttf'))
+			return Sys.getCwd() + 'mods/$mod/fonts/$key.ttf';
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/fonts/$key.otf'))
+			return Sys.getCwd() + 'mods/$mod/fonts/$key.otf';
 		#end
 
 		if(Assets.exists('assets/fonts/$key.ttf'))
@@ -406,14 +369,10 @@ class Paths
 		#if (MODS_ALLOWED && sys)
 		if(!customPath)
 		{
-			for(mod in Mods.activeMods)
-			{
-				if(Mods.activeMods.length > 0)
-				{
-					if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
-						return Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/$key.json'));
-				}
-			}
+			var mod = Paths.currentMod;
+
+			if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/$key.json'))
+				return Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/$key.json'));
 		}
 		else
 		{

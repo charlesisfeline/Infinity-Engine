@@ -138,21 +138,17 @@ class StoryMenuState extends MusicBeatState
 		#end
 		
         #if (MODS_ALLOWED && sys)
-        if(Mods.activeMods.length > 0)
-        {
-            for(mod in Mods.activeMods)
-            {
-                if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
-                {
-                    var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks/');
-                    
-                    for(jsonThingy in funnyArray)
-                    {
-                        jsonDirs.push(jsonThingy);
-                    }
-                }
-            }
-        }
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
+		{
+			var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks/');
+			
+			for(jsonThingy in funnyArray)
+			{
+				jsonDirs.push(jsonThingy);
+			}
+		}
         #end
 
         for(dir in jsonDirs)

@@ -63,22 +63,18 @@ class CreditsState extends MusicBeatState
 		}
 
 		#if (MODS_ALLOWED && sys)
-		for(mod in Mods.activeMods)
-		{
-			if(Mods.activeMods.length > 0)
-			{
-				if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/data/credits.json'))
-				{
-					var modJson = Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/data/credits.json')).credits;
+        var mod = Paths.currentMod;
 
-					for(i in 0...modJson.length)
-					{
-                        var credit = modJson[i];
-                        credits.push(new Credit(credit.name, credit.description, credit.color));
-					}
-				}
-			}
-		}
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/data/credits.json'))
+        {
+            var modJson = Json.parse(sys.io.File.getContent(Sys.getCwd() + 'mods/$mod/data/credits.json')).credits;
+
+            for(i in 0...modJson.length)
+            {
+                var credit = modJson[i];
+                credits.push(new Credit(credit.name, credit.description, credit.color));
+            }
+        }
 		#end
 
         grpIcons = new FlxTypedGroup<CreditsIcon>();
