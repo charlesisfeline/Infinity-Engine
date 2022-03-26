@@ -1,5 +1,6 @@
 package states;
 
+import openfl.display.BitmapData;
 import mods.Mods;
 import options.OptionsHandler;
 import util.CoolUtil;
@@ -23,6 +24,9 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
+
+// REMEMBER TO MAKE STORY MODE WORK CORRECTLY WITH NEW MOD SYSTEM!!!
+// CUZ IT'S KINDA BROKEN!!! LOL!!!
 
 using StringTools;
 
@@ -82,6 +86,8 @@ class StoryMenuState extends MusicBeatState
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 
+	var yellowBG:FlxSprite;
+
 	override function create()
 	{
 		transIn = FlxTransitionableState.defaultTransIn;
@@ -111,7 +117,7 @@ class StoryMenuState extends MusicBeatState
 		rankText.screenCenter(X);
 
 		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
-		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
+		yellowBG = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
@@ -131,57 +137,7 @@ class StoryMenuState extends MusicBeatState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
-		#if sys
-		jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
-		#else
-		jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
-		#end
-		
-        #if (MODS_ALLOWED && sys)
-		var mod = Paths.currentMod;
-
-		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
-		{
-			var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks/');
-			
-			for(jsonThingy in funnyArray)
-			{
-				jsonDirs.push(jsonThingy);
-			}
-		}
-        #end
-
-        for(dir in jsonDirs)
-        {
-            if(dir.endsWith(".json"))
-                jsons.push(dir.split(".json")[0]);
-        }
-
-		for (i in 0...jsons.length)
-		{
-			var json:WeekData = Paths.parseJson('weeks/' + jsons[i]);
-			
-			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, json.texture);
-			weekThing.y += ((weekThing.height + 20) * i);
-			weekThing.targetY = i;
-			grpWeekText.add(weekThing);
-
-			weekThing.screenCenter(X);
-			weekThing.antialiasing = Options.getData('anti-aliasing');
-			// weekThing.updateHitbox();
-
-			// Needs an offset thingie
-			if (!weekUnlocked[i])
-			{
-				var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
-				lock.frames = ui_tex;
-				lock.animation.addByPrefix('lock', 'lock');
-				lock.animation.play('lock');
-				lock.ID = i;
-				lock.antialiasing = Options.getData('anti-aliasing');
-				grpLocks.add(lock);
-			}
-		}
+		loadWeeks();
 
 		trace("Line 96");
 
@@ -276,6 +232,208 @@ class StoryMenuState extends MusicBeatState
 		trace("Line 165");
 
 		super.create();
+		currentModText = new FlxText(FlxG.width, 5, 0, "among us?", 24);
+		currentModText.setFormat(Paths.font("vcr"), 24, FlxColor.WHITE, RIGHT);
+		currentModText.alignment = RIGHT;
+
+		currentModBG = new FlxSprite(currentModText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
+		currentModBG.alpha = 0.6;
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon = new FlxSprite().loadGraphic(bitmapData);
+		}
+		else
+		{
+			currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		add(currentModBG);
+		add(currentModText);
+		add(currentModIcon);
+
+		positionCurrentMod();
+
+		var switchWarn:FlxText = new FlxText(0, currentModBG.y - (currentModBG.height + 6), 0, "[CTRL + LEFT/RIGHT to switch mods]");
+		switchWarn.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
+		switchWarn.borderSize = 2;
+		add(switchWarn);
+
+		switchWarn.x = FlxG.width - (switchWarn.width + 8);
+	}
+	
+	// CURRENT MOD SHIT
+	var currentModBG:FlxSprite;
+	var currentModText:FlxText;
+
+	var currentModIcon:FlxSprite;
+
+	function positionCurrentMod()
+	{
+		currentModText.text = Paths.currentMod;
+		currentModText.setPosition(FlxG.width - (currentModText.width + 6), FlxG.height - (currentModText.height + 6));
+
+		currentModBG.makeGraphic(Math.floor(currentModText.width + 8), Math.floor(currentModText.height + 8), 0xFF000000);
+		currentModBG.setPosition(FlxG.width - currentModBG.width, FlxG.height - currentModBG.height);
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon.loadGraphic(bitmapData);
+		}
+		else
+		{
+			currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		currentModIcon.setGraphicSize(Math.floor(currentModBG.height));
+		currentModIcon.updateHitbox();
+
+		currentModIcon.setPosition(currentModBG.x - (currentModIcon.width), currentModBG.y);
+	}
+
+	function changeMod(?change:Int = 0)
+	{
+		var index:Int = Mods.activeMods.indexOf(Paths.currentMod);
+
+		index += change;
+
+		if(index < 0)
+			index = Mods.activeMods.length - 1;
+
+		if(index > Mods.activeMods.length - 1)
+			index = 0;
+
+		Paths.currentMod = Mods.activeMods[index];
+
+		positionCurrentMod();
+		loadWeeks();
+
+		curWeek = 0;
+		changeWeek();
+	}
+
+	function loadWeeks()
+	{
+		for(fuck in grpWeekText.members)
+		{
+			fuck.kill();
+			fuck.destroy();
+		}
+
+		for(fuck in grpLocks.members)
+		{
+			fuck.kill();
+			fuck.destroy();
+		}
+
+		grpWeekText.clear();
+		grpLocks.clear();
+		
+		jsons = [];
+
+		#if (MODS_ALLOWED && sys)
+		if(Paths.currentMod == "Vanilla FNF")
+		{
+			#if sys
+			jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
+			#else
+			jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
+			#end
+		}
+		else
+			jsonDirs = [];
+		#else
+		#if sys
+		jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
+		#else
+		jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
+		#end
+		#end
+		
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+		if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/weeks/'))
+		{
+			var funnyArray = sys.FileSystem.readDirectory(Sys.getCwd() + 'mods/$mod/weeks/');
+			
+			if(funnyArray.length > 0)
+			{
+				for(jsonThingy in funnyArray)
+				{
+					jsonDirs.push(jsonThingy);
+				}
+			}	
+			else
+			{
+				#if sys
+				jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
+				#else
+				jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
+				#end
+			}
+		}
+		else
+		{
+			#if sys
+			jsonDirs = sys.FileSystem.readDirectory(Sys.getCwd() + "assets/weeks/");
+			#else
+			jsonDirs = ["tutorial.json", "week1.json", "week2.json", "week3.json", "week4.json", "week5.json", "week6.json"];
+			#end
+		}
+        #end
+
+        for(dir in jsonDirs)
+        {
+            if(dir.endsWith(".json"))
+                jsons.push(dir.split(".json")[0]);
+        }
+
+		for (i in 0...jsons.length)
+		{
+			var json:WeekData = Paths.parseJson('weeks/' + jsons[i]);
+			
+			var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+
+			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, json.texture);
+			weekThing.y += ((weekThing.height + 20) * i);
+			weekThing.targetY = i;
+			grpWeekText.add(weekThing);
+
+			weekThing.screenCenter(X);
+			weekThing.antialiasing = Options.getData('anti-aliasing');
+			// weekThing.updateHitbox();
+
+			// Needs an offset thingie
+			if (!weekUnlocked[i])
+			{
+				var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
+				lock.frames = ui_tex;
+				lock.animation.addByPrefix('lock', 'lock');
+				lock.animation.play('lock');
+				lock.ID = i;
+				lock.antialiasing = Options.getData('anti-aliasing');
+				grpLocks.add(lock);
+			}
+		}
 	}
 
 	override function update(elapsed:Float)
@@ -301,6 +459,8 @@ class StoryMenuState extends MusicBeatState
 		{
 			if (!selectedWeek)
 			{
+				var ctrl = FlxG.keys.pressed.CONTROL;
+
 				if (controls.UI_UP_P)
 				{
 					changeWeek(-1);
@@ -310,6 +470,11 @@ class StoryMenuState extends MusicBeatState
 				{
 					changeWeek(1);
 				}
+
+				if(ctrl && controls.UI_LEFT_P)
+					changeMod(-1);
+				if(ctrl && controls.UI_RIGHT_P)
+					changeMod(1);
 
 				if (controls.UI_RIGHT)
 					rightArrow.animation.play('press')

@@ -1,5 +1,6 @@
 package states;
 
+import openfl.display.BitmapData;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import mods.Mods;
@@ -54,13 +55,166 @@ class CreditsState extends MusicBeatState
         bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
         add(bg);
 
-		json = Json.parse(Assets.getText('assets/data/credits.json')).credits;
+        grpIcons = new FlxTypedGroup<CreditsIcon>();
+        add(grpIcons);
 
-		for(i in 0...json.length)
-		{
-            var credit = json[i];
-			credits.push(new Credit(credit.name, credit.description, credit.color));
+        grpText = new FlxTypedGroup<Alphabet>();
+        add(grpText);
+
+        loadCredits();
+
+        bg.color = FlxColor.fromString(Paths.getHexCode(credits[curSelected].color));
+
+        box = new FlxSprite(0, FlxG.height * 0.8).makeGraphic(1, 1, FlxColor.BLACK);
+        box.alpha = 0.6;
+        add(box);
+
+        desc = new FlxText(0, box.y + 5, FlxG.width - 10, "swag shit", 24);
+        desc.setFormat(Paths.font("vcr"), 24, FlxColor.WHITE, CENTER);
+        desc.screenCenter(X);
+        add(desc);
+
+        changeSelection();
+        
+		currentModText = new FlxText(FlxG.width, 5, 0, "among us?", 24);
+		currentModText.setFormat(Paths.font("vcr"), 24, FlxColor.WHITE, RIGHT);
+		currentModText.alignment = RIGHT;
+
+		currentModBG = new FlxSprite(currentModText.x - 6, 0).makeGraphic(1, 1, 0xFF000000);
+		currentModBG.alpha = 0.6;
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon = new FlxSprite().loadGraphic(bitmapData);
 		}
+		else
+		{
+			currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon = new FlxSprite().loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		add(currentModBG);
+		add(currentModText);
+		add(currentModIcon);
+
+		positionCurrentMod();
+
+		var switchWarn:FlxText = new FlxText(0, currentModBG.y - (currentModBG.height + 6), 0, "[CTRL + LEFT/RIGHT to switch mods]");
+		switchWarn.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, RIGHT, OUTLINE, FlxColor.BLACK);
+		switchWarn.borderSize = 2;
+		add(switchWarn);
+
+		switchWarn.x = FlxG.width - (switchWarn.width + 8);
+	}
+	
+	// CURRENT MOD SHIT
+	var currentModBG:FlxSprite;
+	var currentModText:FlxText;
+
+	var currentModIcon:FlxSprite;
+
+	function positionCurrentMod()
+	{
+		currentModText.text = Paths.currentMod;
+		currentModText.setPosition(FlxG.width - (currentModText.width + 6), FlxG.height - (currentModText.height + 6));
+
+		currentModBG.makeGraphic(Math.floor(currentModText.width + 8), Math.floor(currentModText.height + 8), 0xFF000000);
+		currentModBG.setPosition(FlxG.width - currentModBG.width, FlxG.height - currentModBG.height);
+
+		var bitmapData:BitmapData = null;
+
+        #if (MODS_ALLOWED && sys)
+		var mod = Paths.currentMod;
+
+        if(sys.FileSystem.exists(Sys.getCwd() + 'mods/$mod/_mod_icon.png'))
+        {
+            bitmapData = BitmapData.fromFile(Sys.getCwd() + 'mods/$mod/_mod_icon.png');
+			currentModIcon.loadGraphic(bitmapData);
+		}
+		else
+		{
+			currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		}
+		#else
+		currentModIcon.loadGraphic(Paths.image('unknown_mod', 'shared'));
+		#end
+
+		currentModIcon.setGraphicSize(Math.floor(currentModBG.height));
+		currentModIcon.updateHitbox();
+
+		currentModIcon.setPosition(currentModBG.x - (currentModIcon.width), currentModBG.y);
+	}
+
+	function changeMod(?change:Int = 0)
+	{
+		var index:Int = Mods.activeMods.indexOf(Paths.currentMod);
+
+		index += change;
+
+		if(index < 0)
+			index = Mods.activeMods.length - 1;
+
+		if(index > Mods.activeMods.length - 1)
+			index = 0;
+
+		Paths.currentMod = Mods.activeMods[index];
+
+		bg.loadGraphic(Paths.image('menuDesat'));
+
+		positionCurrentMod();
+		loadCredits();
+
+		curSelected = 0;
+		changeSelection();
+	}
+
+    function loadCredits()
+    {
+        credits = [];
+
+        for(fuck in grpText.members)
+        {
+            fuck.kill();
+            fuck.destroy();
+        }
+
+        for(fuck in grpIcons.members)
+        {
+            fuck.kill();
+            fuck.destroy();
+        }
+
+        grpText.clear();
+        grpIcons.clear();
+        
+        #if (MODS_ALLOWED && sys)
+        if(Paths.currentMod == "Vanilla FNF" || !sys.FileSystem.exists(Sys.getCwd() + 'mods/' + Paths.currentMod + '/data/credits.json'))
+        {
+            json = Json.parse(Assets.getText('assets/data/credits.json')).credits;
+
+            for(i in 0...json.length)
+            {
+                var credit = json[i];
+                credits.push(new Credit(credit.name, credit.description, credit.color));
+            }
+        }
+        #else
+        json = Json.parse(Assets.getText('assets/data/credits.json')).credits;
+
+        for(i in 0...json.length)
+        {
+            var credit = json[i];
+            credits.push(new Credit(credit.name, credit.description, credit.color));
+        }
+        #end
 
 		#if (MODS_ALLOWED && sys)
         var mod = Paths.currentMod;
@@ -76,12 +230,6 @@ class CreditsState extends MusicBeatState
             }
         }
 		#end
-
-        grpIcons = new FlxTypedGroup<CreditsIcon>();
-        add(grpIcons);
-
-        grpText = new FlxTypedGroup<Alphabet>();
-        add(grpText);
 
         var credits_i:Int = 0;
         for(credit in credits)
@@ -102,19 +250,6 @@ class CreditsState extends MusicBeatState
 
             credits_i++;
         }
-
-        bg.color = FlxColor.fromString(Paths.getHexCode(credits[curSelected].color));
-
-        box = new FlxSprite(0, FlxG.height * 0.8).makeGraphic(1, 1, FlxColor.BLACK);
-        box.alpha = 0.6;
-        add(box);
-
-        desc = new FlxText(0, box.y + 5, FlxG.width - 10, "swag shit", 24);
-        desc.setFormat(Paths.font("vcr"), 24, FlxColor.WHITE, CENTER);
-        desc.screenCenter(X);
-        add(desc);
-
-        changeSelection();
     }
 
     function changeSelection(?change:Int = 0)
@@ -164,6 +299,8 @@ class CreditsState extends MusicBeatState
     {
         super.update(elapsed);
 
+        var ctrl = FlxG.keys.pressed.CONTROL;
+
         if(controls.BACK)
             FlxG.switchState(new MainMenuState());
 
@@ -172,6 +309,14 @@ class CreditsState extends MusicBeatState
 
         if(controls.UI_DOWN_P)
             changeSelection(1);
+
+        if(ctrl)
+		{
+			if(controls.UI_LEFT_P)
+				changeMod(-1);
+			if(controls.UI_RIGHT_P)
+				changeMod(1);
+		}
 
         box.scale.x = desc.width + 10;
         box.scale.y = desc.height + 10;
