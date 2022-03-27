@@ -5,7 +5,7 @@
         "Blammed"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["pico", "gf", "bf"],
+    "characters": ["pico", "bf", "gf"],
     "description": "PICO",
     "texture": "week3",
     "background_image": "",

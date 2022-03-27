@@ -5,7 +5,7 @@
         "Winter Horrorland"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["parents-christmas", "gf", "bf"],
+    "characters": ["parents-christmas", "bf", "gf"],
     "description": "RED SNOW",
     "texture": "week5",
     "background_image": "",

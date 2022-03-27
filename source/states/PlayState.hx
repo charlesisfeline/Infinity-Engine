@@ -1,5 +1,6 @@
 package states;
 
+import util.WeekShit;
 import mods.Mods;
 import game.Stage;
 import options.UISkinList;
@@ -70,7 +71,10 @@ class PlayState extends MusicBeatState
 	public static var curStage:String = '';
 	public static var SONG:SwagSong;
 	public static var isStoryMode:Bool = false;
+
 	public static var storyWeek:Null<Int> = 0;
+	public static var storyWeekName:Null<String> = "tutorial";
+
 	public static var storyPlaylist:Array<String> = [];
 	public static var storyDifficulty:Int = 1;
 
@@ -220,8 +224,11 @@ class PlayState extends MusicBeatState
 		var songToCache = Paths.formatToSongPath(PlayState.SONG.song);
 
 		// stupid way of caching but i think it works so uh lmao L skill issue +99999 ratio
-		FlxG.sound.playMusic(Paths.inst(Paths.formatToSongPath(PlayState.SONG.song)), 0, false);
 		FlxG.sound.playMusic(Paths.voices(Paths.formatToSongPath(PlayState.SONG.song)), 0, false);
+		FlxG.sound.playMusic(Paths.inst(Paths.formatToSongPath(PlayState.SONG.song)), 0, false);
+
+		// i have to cache the inst AFTER for songs without vocals otherwise the song just instantly ends
+		// :thumbs_up:
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
@@ -440,7 +447,7 @@ class PlayState extends MusicBeatState
 
 		var camPos:FlxPoint = new FlxPoint(0, 0);
 
-		if(SONG.player3 == SONG.player2 || SONG.gf == SONG.player2)
+		if(gfVersion == SONG.player2)
 		{
 			var real_i:Int = 0;
 			for(char in dad.members)
@@ -1696,6 +1703,8 @@ class PlayState extends MusicBeatState
 
 	function endSong():Void
 	{
+		trace("END SONG FUNCTION SUCCESS");
+		
 		canPause = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
@@ -1721,12 +1730,13 @@ class PlayState extends MusicBeatState
 
 				FlxG.switchState(new StoryMenuState());
 
-				StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
+				//StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
+				WeekShit.setCompletedWeek(storyWeekName, true);
 
 				if (SONG.validScore)
 				{
 					if(!usedPractice && songMultiplier >= 1)
-						Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
+						Highscore.saveWeekScore(storyWeekName, campaignScore, storyDifficulty);
 				}
 
 				FlxG.save.data.weekUnlocked = StoryMenuState.weekUnlocked;
@@ -1737,7 +1747,7 @@ class PlayState extends MusicBeatState
 				var difficulty:String = CoolUtil.getDifficultyFilePath();
 
 				trace('LOADING NEXT SONG');
-				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);
+				trace(Paths.formatToSongPath(PlayState.storyPlaylist[0].toLowerCase()) + difficulty);
 
 				if (SONG.song.toLowerCase() == 'eggnog')
 				{
@@ -1754,7 +1764,7 @@ class PlayState extends MusicBeatState
 				FlxTransitionableState.skipNextTransOut = true;
 				prevCamFollow = camFollow;
 
-				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
+				PlayState.SONG = Song.loadFromJson(Paths.formatToSongPath(PlayState.storyPlaylist[0].toLowerCase()) + difficulty, Paths.formatToSongPath(PlayState.storyPlaylist[0]));
 				FlxG.sound.music.stop();
 
 				LoadingState.loadAndSwitchState(new PlayState(true));

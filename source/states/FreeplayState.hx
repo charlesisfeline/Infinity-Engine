@@ -255,7 +255,7 @@ class FreeplayState extends MusicBeatState
 		grpSongs.clear();
 		grpIcons.clear();
 
-		if(Paths.currentMod == "Vanilla FNF")
+		if(Paths.currentMod == "Friday Night Funkin'")
 		{
 			var freeplaySongs:Array<FreeplaySong> = Json.parse(Assets.getText('assets/data/freeplaySongList.json')).songs;
 

@@ -5,7 +5,7 @@
         "Monster"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["spooky", "gf", "bf"],
+    "characters": ["spooky", "bf", "gf"],
     "description": "SPOOKY MONTH",
     "texture": "week2",
     "background_image": "",

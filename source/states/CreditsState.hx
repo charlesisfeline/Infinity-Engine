@@ -196,7 +196,7 @@ class CreditsState extends MusicBeatState
         grpIcons.clear();
         
         #if (MODS_ALLOWED && sys)
-        if(Paths.currentMod == "Vanilla FNF" || !sys.FileSystem.exists(Sys.getCwd() + 'mods/' + Paths.currentMod + '/data/credits.json'))
+        if(Paths.currentMod == "Friday Night Funkin'" || !sys.FileSystem.exists(Sys.getCwd() + 'mods/' + Paths.currentMod + '/data/credits.json'))
         {
             json = Json.parse(Assets.getText('assets/data/credits.json')).credits;
 

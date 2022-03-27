@@ -16,7 +16,7 @@ class Mods
         // loads funny mods from save data
         if(Options.getData("mods") == null)
         {
-            Options.setData("mods", [["Vanilla FNF", true]]);
+            Options.setData("mods", [["Friday Night Funkin'", true]]);
         }
         
         mods = [];
@@ -25,7 +25,7 @@ class Mods
 
         /*if(!alreadyPushedVanilla)
         {
-            mods.push(["Vanilla FNF", true]);
+            mods.push(["Friday Night Funkin'", true]);
             alreadyPushedVanilla = true;
         }*/
 
@@ -86,7 +86,7 @@ class Mods
                             //trace("MEGA FUNNIES: " + mod[0]);
                             //trace("SWAG FUNNIES: " + swagModPath);
 
-                            if(mod[0] != "Vanilla FNF")
+                            if(mod[0] != "Friday Night Funkin'")
                             {
                                 if(!sys.FileSystem.exists(swagModPath + "_mod_info.json"))
                                     mods.remove(mod);

@@ -37,7 +37,7 @@ class ModsState extends MusicBeatState
     {
         for(mod in Mods.mods)
         {
-            if(mod[0] != "Vanilla FNF")
+            if(mod[0] != "Friday Night Funkin'")
                 modsList.push(mod);
         }
 

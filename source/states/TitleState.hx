@@ -1,5 +1,6 @@
 package states;
 
+import util.WeekShit;
 import util.CoolUtil;
 import options.UISkinList;
 import game.Conductor;
@@ -133,6 +134,8 @@ class TitleState extends MusicBeatState
 			if (!StoryMenuState.weekUnlocked[0])
 				StoryMenuState.weekUnlocked[0] = true;
 		}
+
+		WeekShit.init();
 
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());

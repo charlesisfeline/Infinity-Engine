@@ -5,7 +5,7 @@
         "Thorns"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["senpai", "gf", "bf"],
+    "characters": ["senpai", "bf", "gf"],
     "description": "RED SNOW",
     "texture": "week6",
     "background_image": "",

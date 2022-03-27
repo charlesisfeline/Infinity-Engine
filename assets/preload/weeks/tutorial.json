@@ -3,7 +3,7 @@
         "Tutorial"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["", "gf", "bf"],
+    "characters": ["", "bf", "gf"],
     "description": "HOW TO FUNK",
     "texture": "tutorial",
     "background_image": "",

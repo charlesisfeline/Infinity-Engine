@@ -5,7 +5,7 @@
         "Dad Battle"
     ],
     "difficulties": ["easy", "normal", "hard"],
-    "characters": ["dad", "gf", "bf"],
+    "characters": ["dad", "bf", "gf"],
     "description": "DADDY DEAREST",
     "texture": "week1",
     "background_image": "",

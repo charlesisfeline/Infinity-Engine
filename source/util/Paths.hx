@@ -18,7 +18,7 @@ class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 
-	public static var currentMod = "Vanilla FNF";
+	public static var currentMod = "Friday Night Funkin'";
 
 	static var currentLevel:String;
 
