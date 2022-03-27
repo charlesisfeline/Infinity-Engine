@@ -81,6 +81,7 @@ jobs:
           haxelib install flixel-ui
           haxelib install texter
           haxelib install flixel-addons
+          haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit
           haxelib install polymod 1.3.0
           haxelib list
       - name: Create Version Tag
