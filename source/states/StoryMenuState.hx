@@ -362,6 +362,18 @@ class StoryMenuState extends MusicBeatState
                 jsons.push(dir.split(".json")[0]);
         }
 
+		var weekListFile:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/weekList'));
+		trace("WEEK LIST FROM TXT: " + weekListFile);
+
+		for(week in weekListFile)
+		{
+			if(jsons.contains(week))
+			{
+				jsons.remove(week);
+				jsons.insert(weekListFile.indexOf(week), week);
+			}
+		}
+
 		weekUnlocked = [];
 		for (i in 0...jsons.length)
 		{
