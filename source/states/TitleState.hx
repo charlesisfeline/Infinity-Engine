@@ -346,7 +346,7 @@ class TitleState extends MusicBeatState
 
 				if(Options.getData("update-warnings"))
 				{
-					var version:String = "v" + EngineSettings.version.trim();
+					var version:String = EngineSettings.version.trim();
 
 					if (version.trim() != updateVersion && !OutdatedState.leftState)
 					{
