@@ -75,6 +75,17 @@ class TitleState extends MusicBeatState
 
 		FlxG.fixedTimestep = false;
 
+		FlxG.game.focusLostFramerate = 60;
+		FlxG.sound.muteKeys = muteKeys;
+		FlxG.sound.volumeDownKeys = volumeDownKeys;
+		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		FlxG.keys.preventDefaultKeys = [TAB];
+
+		PlayerSettings.init();
+		Options.init();
+		//Mods.init();
+		UISkinList.init();
+
 		#if CHECK_FOR_UPDATES
 		if(!initialized)
 		{
@@ -103,17 +114,6 @@ class TitleState extends MusicBeatState
 			}
 		}
 		#end
-
-		FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = muteKeys;
-		FlxG.sound.volumeDownKeys = volumeDownKeys;
-		FlxG.sound.volumeUpKeys = volumeUpKeys;
-		FlxG.keys.preventDefaultKeys = [TAB];
-
-		PlayerSettings.init();
-		Options.init();
-		//Mods.init();
-		UISkinList.init();
 
 		CoolUtil.updateFramerate();
 
