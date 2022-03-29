@@ -100,9 +100,7 @@ The compiling speed depends on your hardware.
 - Achievements
 
 # ✅ Finished/Almost Finished
-- Gameplay
-- Stages/Backgrounds
-- Menus
+- i don't fuckin know
 
 ## 📖 Credits
 - SwordCube - Project Owner, mega dumbass (True Facts), Coder, Artist ([GitHub](https://github.com/swordcube)) ([GameJolt](https://gamejolt.com/@swordcube)) ([Twitter](https://twitter.com/swordcube))
