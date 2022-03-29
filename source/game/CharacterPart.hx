@@ -82,7 +82,7 @@ class CharacterPart extends FlxSprite
 
 				if(json == null)
 				{
-					curCharacter = "dad";
+					curCharacter = "bf";
 					json = Paths.parseJson('characters/$curCharacter/config');
 				}
 

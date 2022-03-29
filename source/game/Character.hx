@@ -57,7 +57,7 @@ class Character extends FlxTypedGroup<CharacterPart>
 
 			if(json == null)
 			{
-				character = "dad";
+				character = "bf";
 				json = Paths.parseJson('characters/$character/config');
 			}
 
