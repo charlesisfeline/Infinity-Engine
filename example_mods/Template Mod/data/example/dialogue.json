@@ -1,0 +1,22 @@
+{
+    "box_skin": "default",
+    "font": "default",
+    "font_size": "32",
+    "dialogue": [
+        {
+            "character": "dad",
+            "text": "This is an example of dialogue.",
+            "speed": 0.05
+        },
+        {
+            "character": "bf",
+            "text": "This is yet another example.",
+            "speed": 0.05
+        },
+        {
+            "character": "dad",
+            "text": "Get Real",
+            "speed": 0.05
+        }
+    ]
+}
