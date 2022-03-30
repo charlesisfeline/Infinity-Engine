@@ -1,0 +1,12 @@
+{
+    "songs": [
+        "Example"
+    ],
+    "difficulties": ["easy", "normal", "hard"],
+    "characters": ["dad", "bf", "gf"],
+    "description": "Example Week",
+    "texture": "week1",
+    "background_image": "",
+    "background_color": "af66ce",
+    "locked_before": ""
+}

@@ -504,19 +504,21 @@ class StoryMenuState extends MusicBeatState
 				stopspamming = true;
 			}
 
+			var json:WeekData = Paths.parseJson('weeks/' + jsons[curWeek]);
+
 			PlayState.songMultiplier = 1;
-			PlayState.storyPlaylist = grpWeekText.members[curWeek].json.songs;
+			PlayState.storyPlaylist = json.songs;
 			PlayState.isStoryMode = true;
 			selectedWeek = true;
 
 			CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 
-			if(grpWeekText.members[curWeek].json.difficulties != null && grpWeekText.members[curWeek].json.difficulties.length > 0)
+			if(json.difficulties != null && json.difficulties.length > 0)
 			{
 				// go through all difficulties and add them to the list
 				var diffs:Array<String> = [];
 
-				for(diff in grpWeekText.members[curWeek].json.difficulties)
+				for(diff in json.difficulties)
 				{
 					diffs.push(diff);
 				}

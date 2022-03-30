@@ -1,0 +1,11 @@
+{
+    "open_anim": ["normal open", 24, false],
+    "idle_anim": ["normal idle", 24, true],
+    "angry_open_anim": ["angry open", 24, false],
+    "angry_idle_anim": ["angry idle", 24, true],
+    "position": [
+        7,
+        0
+    ],
+    "scale": 1
+}

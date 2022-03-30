@@ -1,5 +1,6 @@
 package states;
 
+import ui.InfinityDialogueBox;
 import util.WeekShit;
 import mods.Mods;
 import game.Stage;
@@ -662,7 +663,7 @@ class PlayState extends MusicBeatState
 				case 'thorns':
 					schoolIntro(doof);
 				default:
-					startCountdown();
+					infinityDialogue();
 			}
 		}
 		else
@@ -675,6 +676,23 @@ class PlayState extends MusicBeatState
 		}
 
 		super.create();
+	}
+
+	function infinityDialogue()
+	{
+		var dialogueJson:DialogueData = Paths.parseJson('data/' + Paths.formatToSongPath(SONG.song) + '/dialogue');
+
+		if(dialogueJson == null)
+			startCountdown();
+		else
+		{
+			inCutscene = true;
+			
+			var doof:InfinityDialogueBox = new InfinityDialogueBox(dialogueJson);
+			doof.cameras = [camHUD];
+			doof.finishThing = startCountdown;
+			add(doof);
+		}
 	}
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
@@ -1407,7 +1425,7 @@ class PlayState extends MusicBeatState
 		// better streaming of shit
 
 		// RESET = Quick Game Over Screen
-		if (controls.RESET)
+		if (controls.RESET && !inCutscene)
 		{
 			health = 0;
 			trace("RESET = True");

@@ -220,7 +220,7 @@ class Alphabet extends FlxSpriteGroup
 
 		if(soundDialog == null)
 		{
-			Alphabet.setDialogueSound();
+			setDialogueSound();
 		}
 
 		if(speed <= 0) {
