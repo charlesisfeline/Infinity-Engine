@@ -166,7 +166,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
     {
         for(i in 0...grpValues.members.length)
         {
-            switch(options[curSelected].type)
+            switch(options[valueNumber[i]].type)
             {
                 case 'float' | 'int':
                     grpValues.members[i].changeText(FlxMath.roundDecimal(Options.getData(options[valueNumber[i]].variable), options[valueNumber[i]].decimals)+"");
@@ -228,8 +228,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
                 checkboxNumber.push(i);
                 checkboxArray.push(checkbox);
                 checkbox.ID = i;
-                checkbox.offsetX -= 150;
-                checkbox.offsetY -= 150;
+                checkbox.offsetX -= 200;
+                checkbox.offsetY -= 25;
 
                 checkbox.checked = Options.getData(options[i].variable) == true;
                 checkbox.refresh();

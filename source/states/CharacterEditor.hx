@@ -443,6 +443,12 @@ class CharacterEditor extends MusicBeatState
                 else
                     character.animation.addByPrefix(animNameInput.text, animInput.text, Math.floor(fpsStepper.value), shouldLoopBox.checked);
 
+                character.anims[curSelected].anim = animNameInput.text;
+                character.anims[curSelected].name = animInput.text;
+                character.anims[curSelected].indices = indices;
+                character.anims[curSelected].fps = Math.floor(fpsStepper.value);
+                character.anims[curSelected].loop = shouldLoopBox.checked;
+
                 character.playAnim(animNameInput.text, true);
             }
         });

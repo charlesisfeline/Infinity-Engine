@@ -38,7 +38,7 @@ class Checkbox extends FlxSprite
         super.update(elapsed);
 
 		if (sprTracker != null) {
-			setPosition(sprTracker.x - 130 + offsetX, sprTracker.y + 30 + offsetY);
+			setPosition(sprTracker.x + offsetX, sprTracker.y + offsetY);
 			if(copyAlpha) {
 				alpha = sprTracker.alpha;
 			}
@@ -98,13 +98,13 @@ class Checkbox extends FlxSprite
                 offset.set(0, 0);
 
             if(anim == 'checked')
-                offset.set(3, 20);
+                offset.set(9, 27);
 
             if(anim == 'uncheck')
-                offset.set(4, 19);
+                offset.set(9, 27);
 
             if(anim == 'check')
-                offset.set(100, 93);
+                offset.set(38, 28);
         }
     }
 }
